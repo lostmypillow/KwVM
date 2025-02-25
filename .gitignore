@@ -6,3 +6,4 @@
 /dist/*.wixpdb
 **/__pycache__
 vdiclient.spec
+config.py
