@@ -91,6 +91,6 @@ pve1.kaowei.tw:3128 = 192.168.2.13:3128
 # More parameter definitions here: https://www.mankier.com/1/remote-viewer
 # Some Examples:
 # Enable USB passthrough
-enable-usbredir = true
+#enable-usbredir = true
 # Enable auto USB device sharing
-enable-usb-autoshare = true
+#enable-usb-autoshare = true
