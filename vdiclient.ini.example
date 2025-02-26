@@ -4,9 +4,9 @@ title = VDI Login
 # This is the PySimpleGui Theme that is used. Run vdiclient.py with flag `--list_themes` for a list of themes
 theme = LightBlue
 # Program Icon
-icon = vdiicon.ico
+icon = logo.ico
 # Logo displayed on all windows
-logo = vdiclient.png
+logo = logo.png
 # Enable Kiosk mode, which does not allow the user to close anything
 kiosk = False
 # Enable/Disable Fullscreen mode (not applicable in Kiosk mode)
@@ -14,7 +14,7 @@ fullscreen = True
 # Disable viewer_kiosk mode if kiosk is set to true, this allows overriding remote_viewer kiosk mode
 #viewer_kiosk = False
 # Enable displaying SPICE ini file before opening virt-viewer
-inidebug = True
+inidebug = False
 # Select which guest types to display. Acceptable values: both, lxc, qemu
 guest_type = both
 # Show VM option for resetting VM
@@ -49,7 +49,7 @@ token_value = 245a4a7a-581f-434d-be48-e393d9578aa0
 # Password Reset Command Launch. Has to be full executable Command
 #pwresetcmd = start chrome --app=http://pwreset.example.com
 # Automatically connect to a VMID upon authentication
-auto_vmid = 301
+#auto_vmid = 301
 
 # An additional cluster definition
 #[Hosts.PVE2]
