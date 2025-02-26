@@ -9,10 +9,10 @@ hostname = socket.gethostname()
 print(hostname)
 
 
-async def main():
+async def get_vm_info():
     if async_engine:
         await async_engine.dispose()
-asyncio.run(main)
+asyncio.run(get_vm_info)
 source_file = "vdiclient.ini.example"
 destination_file = "vdiclient.ini"
 # config_folder = os.path.expanduser("~/.config/VDIClient")
@@ -24,7 +24,7 @@ print(f"Copied {source_file} to {destination_file}")
 # shutil.copyfile(destination_file, final_destination)
 # print(f"Copied {source_file} to {final_destination}")
 
-user = "lostmypillow"
+user_name = "lostmypillow"
 token_name = "lostmypillow"
 token_value = "245a4a7a-581f-434d-be48-e393d9578aa0"
 vm_id = "301"
@@ -34,7 +34,7 @@ proxy_to = "192.168.2.13:3128"
 with open('vdiclient.ini', 'r') as file:
         lines = file.readlines()
         user_line = lines[43].replace("#", "").split(" ")
-        user_line[2] = user + "\n"
+        user_line[2] = user_name + "\n"
         token_name_line = lines[45].replace("#", "").split(" ")
         token_name_line[2] = token_name + "\n"
         token_val_line = lines[47].replace("#", "").split(" ")
@@ -42,6 +42,7 @@ with open('vdiclient.ini', 'r') as file:
         vmid_line = lines[51].replace("#", "").split(" ")
         vmid_line[2] = vm_id + "\n"
 
+        lines[10] = 'kiosk = True\n'
         lines[32] = '               "' + \
             '192.168.3.32' + '" : ' + '8006' + '\n'
         lines[43] = " ".join(str(element) for element in user_line)
