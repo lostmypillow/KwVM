@@ -3,22 +3,16 @@
 # Exit on error
 set -e
 
+echo "KwVDI 0.0.1"
+echo "Author: Johnny Lin"
+echo "Email: jmlin0101@gmail.com"
 
 echo "SETUP [Updating system...]"
 sudo apt-get update -y >/dev/null
 echo "ok"
 
 echo "SETUP [Ensuring necessary packages are installed...]"
-sudo apt-get install -y python3-venv python3-pip python3-tk wget curl gnupg  virt-viewer 
-curl -sSL -O https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-rm packages-microsoft-prod.deb
-sudo apt-get update -y
-sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 
-sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 
-echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
-source ~/.bashrc
-sudo apt-get install -y unixodbc-dev 
+sudo apt-get install -y python3-venv python3-pip python3-tk wget curl gnupg virt-viewer 
 echo "ok"
 
 echo "SETUP [Installing Python requirements...]"
@@ -27,11 +21,7 @@ pip install -r requirements.txt >/dev/null
 
 echo "ok"
 
-echo "SETUP [Building executable..]"
-pyinstaller --onefile --noconsole --noconfirm --hidden-import proxmoxer.backends --hidden-import proxmoxer.backends.https --hidden-import proxmoxer.backends.https.AuthenticationError --hidden-import proxmoxer.core --hidden-import proxmoxer.core.ResourceException --hidden-import subprocess.TimeoutExpired --hidden-import subprocess.CalledProcessError --hidden-import requests.exceptions --hidden-import requests.exceptions.ReadTimeout --hidden-import requests.exceptions.ConnectTimeout --hidden-import requests.exceptions.ConnectionError vdiclient.py
-echo "ok"
-
-echo "SETUP [Modifying ini and launching..]"
-python3 -m modify_ini
+echo "SETUP [Running setup.py..]"
+python3 -m setup
 echo "ok"
 
