@@ -11,14 +11,18 @@ echo "SETUP [Updating system...]"
 sudo apt-get update -y >/dev/null
 echo "ok"
 
-echo "SETUP [Ensuring necessary packages are installed...]"
-sudo apt-get install -y python3-venv python3-pip python3-tk wget curl gnupg virt-viewer 
+echo "SETUP [Installing necessary packages...]"
+packages=("python3-venv" "python3-pip" "python3-tk" "wget" "curl" "gnupg" "virt-viewer")
+# Loop through each package and check if it's installed
+for package in "${packages[@]}"; do
+    if ! dpkg-query -l $package >/dev/null 2>&1; then
+        sudo apt-get install -y $package >/dev/null
+    fi
+done
 echo "ok"
 
 echo "SETUP [Installing Python requirements...]"
 pip install -r requirements.txt >/dev/null
-# Gunicorn is installed only in deployment. This is becuz gunicorn doesn't work in Windows, where most of the dev work happens
-
 echo "ok"
 
 echo "SETUP [Running setup.py..]"

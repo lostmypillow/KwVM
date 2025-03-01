@@ -44,7 +44,9 @@ def loadconfig(config_location = None, config_type='file', config_username = Non
 	config = ConfigParser(delimiters='=')
 	if config_type == 'file':
 		if config_location:
-			if not os.path.isfile(config_location):
+			print(config_location)
+			print(os.path.isfile(config_location))
+			if os.path.isfile(config_location) == False:
 				win_popup_button(f'Unable to read supplied configuration:\n{config_location} does not exist!', 'OK')
 				return False
 		else:
@@ -62,10 +64,10 @@ def loadconfig(config_location = None, config_type='file', config_username = Non
 					'/etc/vdiclient/vdiclient.ini',
 					'/usr/local/etc/vdiclient/vdiclient.ini'
 				]
-		for location in config_list:
-			if os.path.exists(location):
-				config_location = location
-				break
+		# for location in config_list:
+		# 	if os.path.exists(location):
+		# 		config_location = location
+		# 		break
 		if not config_location:
 			win_popup_button(f'Unable to read supplied configuration from any location!', 'OK')
 			return False
@@ -837,6 +839,7 @@ def showvms():
 							window[vmkeyname].update(f"State: {state}")
 
 		event, values = window.read(timeout = 1000)
+		print(event)
 		if event in ('Logout', None):
 			window.close()
 			return False
@@ -860,6 +863,10 @@ def showvms():
 					vmaction(vm['node'], vmid, vm['type'], action='reload')
 			if not found:
 				win_popup_button(f'VM {vm["name"]} no longer availble, please contact your system administrator', 'OK')
+		elif event == sg.WIN_CLOSED:
+			print('window closed')
+			window.close()
+			return False
 	return True
 
 def main():
