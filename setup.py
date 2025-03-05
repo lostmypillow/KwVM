@@ -301,7 +301,7 @@ def handle_login():
     layout = [
         [
             sg.Text(
-                '歡迎! 請登入~',
+                '高偉虛擬機',
                 font=('Arial', 36),
                 justification='center'
             )
@@ -324,30 +324,20 @@ def handle_login():
         ],
 
     ]
-
     window = sg.Window(
-        '高偉虛擬機登入 (KwVDI)',
+        'KwVM',
         layout,
         icon='logo.ico',
-        return_keyboard_events=True)
+        finalize=True)
+    window['-USERNAME-'].bind("<Return>", "_Enter")
 
     while True:
         event, values = window.read()
-
-        # Enable the button if the input field is not empty
-        if values['-USERNAME-']:
-            window['-LOGIN-'].update(disabled=False)
-        elif values['-USERNAME-'] == '':
-            window['-LOGIN-'].update(disabled=True)
-
-        # Event handling
-        if event in ('Submit', '\r'):
-            if values['-USERNAME-'] != '':
-                username = values['-USERNAME-']
-                break
-        elif event == sg.WIN_CLOSED:
+        if event == sg.WINDOW_CLOSED:
             break
-
+        elif event == "-USERNAME-" + "_Enter":
+            username = values['-USERNAME-']
+            break
     window.close()
     return username if username != '' else None
 
@@ -377,35 +367,37 @@ if __name__ == "__main__":
     # Add optional -l or --login argument (no value expected)
     parser.add_argument('-l', '--login', action='store_true',
                         help='Trigger login window')
-    parser.add_argument('-n','--name', type=str, help="Name of VM for a given desktop, -n my_vm , for example")
 
     args = parser.parse_args()
-
+    username = ''
+    hostname = ''
     if args.login:
-        filename = handle_login()
+        username = handle_login()
     else:
-        filename = socket.gethostname()
+        hostname = socket.gethostname()
 
-    print(f'[KWVDI] Launching VM for {filename}')
+    print(f'[KWVDI] Launching VM for {hostname if hostname != '' else username}')
+
+    check_db(hostname if hostname != '' else username)
 
     
-    vms_to_modify = compare(check_db(filename))
-    if vms_to_modify:
-        for vm in vms_to_modify:
-            if vm_info['proxmox'] == 1:
-                try:
-                    setup_proxmox()
-                except Exception as e:
-                    print('[ERROR] Exception thrown when setting up Proxmox VM:')
-                    print(e)
+    # vms_to_modify = compare(check_db(filename))
+    # if vms_to_modify:
+    #     for vm in vms_to_modify:
+    #         if vm_info['proxmox'] == 1:
+    #             try:
+    #                 setup_proxmox()
+    #             except Exception as e:
+    #                 print('[ERROR] Exception thrown when setting up Proxmox VM:')
+    #                 print(e)
 
-            elif vm_info['proxmox'] == 0:
-                try:
-                    setup_custom(vm_info)
-                except Exception as e:
-                    print(
-                        '[ERROR] Exception thrown when setting up Custom (non Proxmox) VM:')
-                    print(e)
-            else:
-                print(
-                    f'[ERROR] proxmox value is not either 0 or 1. WTF did you do? The DB even has a constraint making it sure it gets either 0 or 1. No VM info exists for this computer.')
+    #         elif vm_info['proxmox'] == 0:
+    #             try:
+    #                 setup_custom(vm_info)
+    #             except Exception as e:
+    #                 print(
+    #                     '[ERROR] Exception thrown when setting up Custom (non Proxmox) VM:')
+    #                 print(e)
+    #         else:
+    #             print(
+    #                 f'[ERROR] proxmox value is not either 0 or 1. WTF did you do? The DB even has a constraint making it sure it gets either 0 or 1. No VM info exists for this computer.')
