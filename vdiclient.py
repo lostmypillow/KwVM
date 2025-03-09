@@ -13,8 +13,9 @@ import json
 import subprocess
 from time import sleep
 from io import StringIO
-
-
+import keyboard
+import time
+import threading
 
 class G:
 	spiceproxy_conv = {}
@@ -631,6 +632,7 @@ def vmaction(vmnode, vmid, vmtype, action='connect'):
 		else:
 			confignode['virt-viewer'][key] = f'{value}'
 	if G.addl_params:
+		print(f'G.addl_params: {G.addl_params}')
 		for key, value in G.addl_params.items():
 			confignode['virt-viewer'][key] = f'{value}'
 	inifile = StringIO('')
@@ -648,9 +650,14 @@ def vmaction(vmnode, vmid, vmtype, action='connect'):
 	elif G.fullscreen:
 		pcmd.append('--full-screen')
 	pcmd.append('-') #We need it to listen on stdin
+	print(pcmd)
+	print(inistring)
+	print(G.__dict__)
 	process = subprocess.Popen(pcmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+
 	try:
 		output = process.communicate(input=inistring.encode('utf-8'), timeout=5)[0]
+
 	except subprocess.TimeoutExpired:
 		pass
 	status = True
@@ -666,6 +673,7 @@ def setcmd():
 			result = subprocess.check_output(cmd1, shell=True)
 			cmdresult = result.decode('utf-8')
 			cmdparts = cmdresult.split('=')
+			print(cmdresult)
 			for row in csv.reader([cmdparts[1]], delimiter = ' ', quotechar = '"'):
 				G.vvcmd = row[0]
 				break
@@ -720,6 +728,7 @@ def pveauth(username, passwd=None, totp=None):
 						verify_ssl=G.hosts[G.current_hostset]['verify_ssl'],
 						port=port
 					)
+				
 				connected = True
 				authenticated = True
 				return connected, authenticated, err
@@ -813,10 +822,10 @@ def showvms():
 						layout = setvmlayout(vms)
 						window.close()
 						if G.icon:
-							window = sg.Window(G.title, layout, return_keyboard_events=True, finalize=True, resizable=False, no_titlebar=G.kiosk, size=(G.width, G.height), icon=G.icon)
+							window = sg.Window(G.title, layout, finalize=True, resizable=False, no_titlebar=G.kiosk, size=(G.width, G.height), icon=G.icon)
 						else:
-							window = sg.Window(G.title, layout, return_keyboard_events=True,finalize=True, resizable=False, no_titlebar=G.kiosk, size=(G.width, G.height))
-					window.bring_to_front()
+							window = sg.Window(G.title, layout, finalize=True, resizable=False, no_titlebar=G.kiosk, size=(G.width, G.height))
+					# window.bring_to_front()
 				else: # Refresh existing vm status
 					newvms = getvms()
 					if newvms:
@@ -867,21 +876,36 @@ def showvms():
 			print('window closed')
 			window.close()
 			return False
+		elif event == "F11:122":
+			print('Terminating kiosk mode...')
+			window.close()
+			return False
 	return True
 
-def main():
+def main(list_themes=False, config_type='file', config_location=None,
+         config_username=None, config_password=None, ignore_ssl=True):
 	G.scaling = 1 # TKinter requires integers
-	parser = argparse.ArgumentParser(description='Proxmox VDI Client')
-	parser.add_argument('--list_themes', help='List all available themes', action='store_true')
-	parser.add_argument('--config_type', help='Select config type (default: file)', choices=['file', 'http'], default='file')
-	parser.add_argument('--config_location', help='Specify the config location (default: search for config file)', default=None)
-	parser.add_argument('--config_username', help="HTTP basic authentication username (default: None)", default=None)
-	parser.add_argument('--config_password', help="HTTP basic authentication password (default: None)", default=None)
-	parser.add_argument('--ignore_ssl', help="HTTPS ignore SSL certificate errors (default: False)", action='store_false', default=True)
-	args = parser.parse_args()
-	if args.list_themes:
-		sg.preview_all_look_and_feel_themes()
-		return
+	# parser = argparse.ArgumentParser(description='Proxmox VDI Client')
+	# parser.add_argument('--list_themes', help='List all available themes', action='store_true')
+	# parser.add_argument('--config_type', help='Select config type (default: file)', choices=['file', 'http'], default='file')
+	# parser.add_argument('--config_location', help='Specify the config location (default: search for config file)', default=None)
+	# parser.add_argument('--config_username', help="HTTP basic authentication username (default: None)", default=None)
+	# parser.add_argument('--config_password', help="HTTP basic authentication password (default: None)", default=None)
+	# parser.add_argument('--ignore_ssl', help="HTTPS ignore SSL certificate errors (default: False)", action='store_false', default=True)
+	# args = parser.parse_args()
+	args = argparse.Namespace(
+        list_themes=list_themes,
+        config_type=config_type,
+        config_location=config_location,
+        config_username=config_username,
+        config_password=config_password,
+        ignore_ssl=ignore_ssl
+    )
+	print(args)
+
+	# if args.list_themes:
+	# 	sg.preview_all_look_and_feel_themes()
+	# 	return
 	setcmd()
 	if not loadconfig(config_location=args.config_location, config_type=args.config_type, config_username=args.config_username, config_password=args.config_password, ssl_verify=args.ignore_ssl):
 		return False
