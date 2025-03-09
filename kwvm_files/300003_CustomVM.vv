@@ -5,3 +5,4 @@ port=8185
 password=8185
 fullscreen=1
 kiosk-quit=on-disconnect
+title=KaoweiVM

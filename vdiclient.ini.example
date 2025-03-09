@@ -12,7 +12,7 @@ kiosk = False
 # Enable/Disable Fullscreen mode (not applicable in Kiosk mode)
 fullscreen = True
 # Disable viewer_kiosk mode if kiosk is set to true, this allows overriding remote_viewer kiosk mode
-#viewer_kiosk = False
+viewer_kiosk = True
 # Enable displaying SPICE ini file before opening virt-viewer
 inidebug = False
 # Select which guest types to display. Acceptable values: both, lxc, qemu
@@ -84,7 +84,7 @@ token_value = 245a4a7a-581f-434d-be48-e393d9578aa0
 # These rewrite rules are written `IP:port = IP:port`
 # 1. Use the inidebug and read the current proxy=pve1.example.com:3128
 # 2. Add your proxmox ip to the right side e.g. 123.123.123.123:6000
-pve1.kaowei.tw:3128 = 192.168.2.13:3128
+#pve1.kaowei.tw:3128 = 192.168.2.13:3128
 
 #[AdditionalParameters]
 # If you wish to define additional parameters to pass to virt-viewer you may define them here
