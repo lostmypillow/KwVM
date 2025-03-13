@@ -14,7 +14,7 @@ from vdiclient import main as launch_proxmox
 import tempfile
 import pkg_resources
 import keyboard
-
+import signal
 
 # G = {'__module__': 'vdiclient', 'spiceproxy_conv': {}, 'proxmox': ProxmoxAPI (https backend for https://192.168.2.13:8006/api2/json), 'icon': 'logo.ico', 'vvcmd': 'C:\\Program Files\\VirtViewer v11.0-256\\bin\\remote-viewer.exe', 'scaling': 1, 'inidebug': False, 'addl_params': None, 'imagefile': 'logo.png', 'kiosk': False, 'viewer_kiosk': True, 'fullscreen': True, 'show_reset': False, 'show_hibernate': False, 'current_hostset': 'PVE', 'title': 'VDI Login', 'hosts': {'PVE': {'hostpool': [{'host': '192.168.2.13', 'port': 8006}], 'backend': 'pve', 'user': 'lostmypillow', 'token_name': 'lostmypillow', 'token_value': '245a4a7a-581f-434d-be48-e393d9578aa0', 'totp': False, 'verify_ssl': False, 'pwresetcmd': None, 'auto_vmid': 301, 'knock_seq': []}}, 'theme': 'LightBlue', 'guest_type': 'both', 'width': None, 'height': None, }
 
@@ -130,6 +130,7 @@ def check_db(vm_owner: str) -> list[dict]:
 def setup_custom(vm_info: dict) -> str:
     owner: str = vm_info["human_owner"] if vm_info["human_owner"] else vm_info["pc_owner"]
     filename: str = owner + '_' + vm_info["vm_name"] + '.vv'
+    file
     shutil.copyfile(os.path.join(os.getcwd(), "client.vv.example"),
                     os.path.join(config_folder_path, filename))
     host: str = vm_info['spice_proxy'].split(':')[0]
@@ -164,7 +165,18 @@ def setup_custom(vm_info: dict) -> str:
 
 def launch_custom(file_path):
     print("[CUSTOM] Running command: remote-viewer " + file_path)
-    virt_process = subprocess.Popen(["remote-viewer", "-v", file_path])
+    virt_process = subprocess.Popen(["remote-viewer", "-v", "-k", file_path])
+
+    # Define signal handler to close the process when the window is closed
+    def close_process(sig, frame):
+        print("Window closed or exit signal received. Terminating process.")
+        virt_process.terminate()
+        sys.exit(0)
+
+    # Attach the signal handler to handle window close (SIGINT or SIGTERM)
+    signal.signal(signal.SIGINT, close_process)
+    signal.signal(signal.SIGTERM, close_process)
+
     try:
         print("Running virt-viewer in kiosk mode. Press 'Esc' to exit.")
         while True:
@@ -172,6 +184,12 @@ def launch_custom(file_path):
                 print("Exit key pressed, closing virt-viewer.")
                 virt_process.terminate()  # Terminate the virt-viewer process
                 break
+
+            # Check if the process has exited
+            if virt_process.poll() is not None:
+                print("Remote-viewer process has exited.")
+                break
+
     except KeyboardInterrupt:
         print("Process interrupted.")
         virt_process.terminate()

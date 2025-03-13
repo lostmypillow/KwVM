@@ -8,10 +8,21 @@ from PySide6.QtCore import QObject
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from controller import Controller
+import argparse
+import configparser
+import os
+from new_setup import launch_proxmox_desktop
 
-load_dotenv()
+def main():
+    load_dotenv()
+    parser = argparse.ArgumentParser(description="KwVM")
+    
+    parser.add_argument("-p", "--proxmox", type=str, help="Run Proxmox VM instead of the GUI")
+    args = parser.parse_args()
 
-if __name__ == '__main__':
+    if args.proxmox:
+        launch_proxmox_desktop(args.proxmox)
+        return
 
     app = QGuiApplication(sys.argv)  # autogen
 
@@ -40,3 +51,10 @@ if __name__ == '__main__':
     controller.initialize(root)
 
     sys.exit(app.exec())    # autogen
+
+
+if __name__ == '__main__':
+    main()
+
+
+    

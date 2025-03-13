@@ -6,8 +6,9 @@ from typing import Optional
 import ast
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
-from PySide6.QtCore import QObject, Slot, QUrl, QByteArray, QTimer, Qt
+from PySide6.QtCore import QObject, Slot, QUrl, QByteArray, QTimer, Qt, QThread
 from PySide6.QtGui import QGuiApplication, QKeyEvent
+from new_setup import setup_proxmox_vm
 # Configure logging
 logging.basicConfig(
     filename="app.log",
@@ -110,6 +111,8 @@ class Controller(QObject):
             try:
                 response_json = json.loads(QByteArray(response_data).data().decode(
                     "utf-8"))
+                if len(response_json) == 1:
+                    config_filepath = setup_proxmox_vm(response_json[0])
                 self.status_view.setProperty(
                     'text', response_json[0]['vm_name'])
 
