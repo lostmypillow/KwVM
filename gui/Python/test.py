@@ -5,7 +5,7 @@ import os
 host = "192.168.2.13"
 username = "lostmypillow"
 token_name = "lostmypillow"
-x = proxmoxer.ProxmoxAPI(
+proxmox_obj = proxmoxer.ProxmoxAPI(
 						host,
 						user=f"{username}@pve",
 						token_name=token_name,
@@ -15,12 +15,12 @@ x = proxmoxer.ProxmoxAPI(
 					)
 nodes = []
 # ['pve1', 'pve2', 'pve3']
-for node in x.cluster.resources.get(type='node'):
+for node in proxmox_obj.cluster.resources.get(type='node'):
 			if node['status'] == 'online':
 				nodes.append(node['node'])
 
 
-#x.cluster.resources.get(type='vm')
+#proxmox_obj.cluster.resources.get(type='vm')
 # all_vms = [{'cpu': 0.0132651315238784,
 #   'disk': 0,
 #   'diskread': 1368367616,
@@ -41,18 +41,16 @@ for node in x.cluster.resources.get(type='node'):
 #   'vmid': 301}]		
 
 
-# x.nodes('pve1').qemu('301').status.get('current')['status']
+# proxmox_obj.nodes('pve1').qemu('301').status.get('current')['status']
 # 'running'
 # pprint()
 
-spiceconfig = x.nodes('pve1').qemu('301').spiceproxy.post()
-print(spiceconfig)
-y = '\n'.join(f"{k} = {v}" for k, v in spiceconfig.items() if k != 'delete-this-file')
-print(y)
+config_contents = '\n'.join(f"{k} = {v}" for k, v in proxmox_obj.nodes('pve1').qemu('301').spiceproxy.post().items() if k != 'delete-this-file')
+
 config_folder_path = os.path.abspath('./kwvm_files')
 with open(os.path.join(config_folder_path, "output.vv"), 'w') as file:
 	file.write("[virt-viewer]\n")
-	file.write(y)
+	file.write(config_contents)
 launch_custom(os.path.join(config_folder_path, "output.vv"))
 # for key, value in spiceconfig.items():
 # 		if key == 'proxy':
