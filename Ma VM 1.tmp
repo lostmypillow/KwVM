@@ -1,1 +1,0 @@
-{"vm_name": "Ma VM 1", "proxmox": 1, "username": "lostmypillow", "token_name": "lostmypillow", "token_value": "245a4a7a-581f-434d-be48-e393d9578aa0", "vm_id": 301, "proxy_from": "pve1.kaowei.tw:3128", "proxy_to": "192.168.2.13:3128", "password": "", "status_code": 200}

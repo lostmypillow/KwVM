@@ -1,0 +1,15 @@
+
+<RCC>
+<qresource>
+<file>KwVM_GUI.qmlproject</file>
+<file>KwVM_GUIContent/App.qml</file>
+<file>KwVM_GUIContent/fonts/SarasaFixedTC-Regular.ttf</file>
+<file>KwVM_GUIContent/images/kb.png</file>
+<file>KwVM_GUIContent/images/log-in.svg</file>
+<file>KwVM_GUIContent/images/logo.png</file>
+<file>KwVM_GUIContent/images/search.svg</file>
+<file>KwVM_GUIContent/Screen01.ui.qml</file>
+<file>Python/qtquickcontrols2.conf</file>
+<file>qtquickcontrols2.conf</file>
+</qresource>
+</RCC>

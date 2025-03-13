@@ -1,8 +1,0 @@
-[virt-viewer]
-type=spice
-host=192.168.2.2efefe
-port=8185fef
-password=8185efe
-fullscreen=1
-kiosk-quit=on-disconnect
-title=KaoweiVM
