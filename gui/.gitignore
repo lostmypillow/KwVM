@@ -1,0 +1,7 @@
+*.dist
+.venv
+*.pyc
+*.log
+*.spec
+Python/__pycache__
+Python/autogen/__pycache__
