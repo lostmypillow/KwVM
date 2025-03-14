@@ -58,27 +58,22 @@ def setup_custom_vm(vm_info: dict) -> str:
     # Construct owner field
     config_filepath = construct_config_info(vm_info=vm_info)
 
-    # Copy the vv example to config folder
-    shutil.copyfile(example_config_filepath, config_filepath)
+    with open(config_filepath, 'w') as file:
+        file.write(f'''[virt-viewer]
+type=spice
+fullscreen=1
+kiosk-quit=on-disconnect
+host={vm_info['spice_proxy'].split(':')[0]}
+port={vm_info['spice_proxy'].split(':')[1]}
+password={vm_info['vm_password']}
+title={vm_info['vm_name']}
+''')
 
-    with open(config_filepath, 'r') as file:
+    if vm_info['pc_owner'] is not None:
+        pass
+        # TODO create desktop file pointing to the vv
 
-        lines = file.readlines()
-
-        lines[2] = 'host=' + vm_info['spice_proxy'].split(':')[0] + '\n'
-
-        lines[3] = 'port=' + vm_info['spice_proxy'].split(':')[1] + '\n'
-
-        lines[4] = 'password=' + vm_info['vm_password'] + '\n'
-
-        with open(config_filepath, 'w') as file:
-            file.writelines(lines)
-        
-        if vm_info['pc_owner'] is not None:
-            pass
-            # TODO create desktop file pointing to the vv
-
-        return config_filepath
+    return config_filepath
 
 
 def setup_proxmox_vm(vm_info: dict) -> str:
@@ -106,9 +101,7 @@ def setup_proxmox_vm(vm_info: dict) -> str:
             raise NodeNotOnlineError(f"Node '{node_name}' is not online.")
 
     config_contents = '\n'.join(f"{k} = {v}" for k, v in proxmox_obj.nodes(node_name).qemu(
-            str(vm_info["pve_vm_id"])).spiceproxy.post().items())
-    
-   
+        str(vm_info["pve_vm_id"])).spiceproxy.post().items())
 
     with open(config_filepath, 'w') as file:
         file.write("[virt-viewer]\n")
@@ -124,7 +117,7 @@ def setup_proxmox_vm(vm_info: dict) -> str:
 
         with open(config_filepath[:-3] + '.ini', 'w') as inifile:
             ini.write(inifile)
-        
+
         # TODO create desktop file pointing to this executable -p name_of_vm
     return config_filepath
 
@@ -165,5 +158,6 @@ def launch(file_path):
 def launch_proxmox_desktop(filename):
     ini = configparser.ConfigParser()
     ini.read(os.path.join(config_folder_path, f"{filename}.ini"))
-    config_filepath = setup_proxmox_vm({key: value for key, value in ini.items(filename)})
+    config_filepath = setup_proxmox_vm(
+        {key: value for key, value in ini.items(filename)})
     launch(config_filepath)
