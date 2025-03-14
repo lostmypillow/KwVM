@@ -11,7 +11,7 @@ from controller import Controller
 import argparse
 import configparser
 import os
-from new_setup import launch_proxmox_desktop
+from new_setup import launch_proxmox_desktop, setup, launch
 
 def main():
     load_dotenv()

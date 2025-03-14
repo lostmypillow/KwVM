@@ -79,6 +79,7 @@ title={vm_info['vm_name']}
 def setup_proxmox_vm(vm_info: dict) -> str:
 
     config_filepath = construct_config_info(vm_info=vm_info)
+    
 
     proxmox_obj = proxmoxer.ProxmoxAPI(
         host=vm_info["pve_host"].split(':')[0],
@@ -92,12 +93,14 @@ def setup_proxmox_vm(vm_info: dict) -> str:
     available_nodes = proxmox_obj.cluster.resources.get(type='node')
 
     if not any(node["node"] == node_name for node in available_nodes):
+        print("Node not found")
         raise NodeNotFoundError(f"Node '{node_name}' does not exist.")
     else:
         # Node does exist, check if it's online
         existing_node = next(
             online_node for online_node in available_nodes if online_node["node"] == node_name)
         if existing_node['status'] != 'online':
+            print("Node not online")
             raise NodeNotOnlineError(f"Node '{node_name}' is not online.")
 
     config_contents = '\n'.join(f"{k} = {v}" for k, v in proxmox_obj.nodes(node_name).qemu(
@@ -119,30 +122,22 @@ def setup_proxmox_vm(vm_info: dict) -> str:
             ini.write(inifile)
 
         # TODO create desktop file pointing to this executable -p name_of_vm
+    print(f'{config_filepath[:-3]}')
     return config_filepath
 
 
 def launch(file_path):
     print("[CUSTOM] Running command: remote-viewer " + file_path)
-    virt_process = subprocess.Popen(["remote-viewer", "-v", "-k", file_path])
-
-    # Define signal handler to close the process when the window is closed
-    def close_process(sig, frame):
-        print("Window closed or exit signal received. Terminating process.")
-        virt_process.terminate()
-        sys.exit(0)
-
-    # Attach the signal handler to handle window close (SIGINT or SIGTERM)
-    signal.signal(signal.SIGINT, close_process)
-    signal.signal(signal.SIGTERM, close_process)
+    virt_process = subprocess.Popen(["remote-viewer", "-v", "-k", "--spice-disable-effects=all", file_path])
 
     try:
-        print("Running virt-viewer in kiosk mode. Press 'Esc' to exit.")
+        print("Running virt-viewer in kiosk mode. Press 'Control + Alt' to exit.")
         while True:
             # Change this to any key you want
-            if keyboard.is_pressed('ctrl+shift+f11'):
+            if keyboard.is_pressed('ctrl+alt'):
                 print("Exit key pressed, closing virt-viewer.")
-                virt_process.terminate()  # Terminate the virt-viewer process
+                virt_process.terminate()
+                sys.exit(0)  # Terminate the virt-viewer process
                 break
 
             # Check if the process has exited
@@ -161,3 +156,11 @@ def launch_proxmox_desktop(filename):
     config_filepath = setup_proxmox_vm(
         {key: value for key, value in ini.items(filename)})
     launch(config_filepath)
+
+
+def setup(vm_info):
+    if vm_info['pve'] == 1:
+        return setup_proxmox_vm(vm_info)
+    elif vm_info['pve'] == 0:
+        print('setting up custom vm')
+        return setup_custom_vm(vm_info=vm_info)

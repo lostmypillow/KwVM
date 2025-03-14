@@ -7,6 +7,7 @@ const formData = reactive({
   human_owner: null,
   pc_owner: null,
   pve: 0,
+  pve_host: '192.168.2.13:8006',
   pve_token_username: null,
   pve_token_name: null,
   pve_token_value: null,
@@ -26,7 +27,7 @@ const clear = () => {
 
 const submit = async () => {
   try {
-    const response = await axios.post("https://example.com/api/vm", formData);
+    const response = await axios.post("http://localhost:8000/vm", formData);
     console.log("Success:", response.data);
   } catch (error) {
     console.error("Error:", error);
@@ -66,7 +67,7 @@ const alwaysEnabledInput = ref("");
       </button>
       <dialog id="my_modal_1" class="modal">
         <div class="modal-box">
-          <h3 class="text-lg font-bold">Hello!</h3>
+          <h3 class="text-lg font-bold">Add VM Configuration</h3>
           <div class="p-6 max-w-lg mx-auto space-y-4">
             <!-- PVE Toggle -->
             <div class="form-control">
@@ -114,7 +115,18 @@ const alwaysEnabledInput = ref("");
               />
             </div>
 
-            
+            <!-- PVE hOST -->
+            <div class="form-control">
+              <label class="label">PVE  HOST</label>
+              <input
+                type="text"
+                v-model="formData.pve_host"
+                class="input input-bordered w-full"
+                :disabled="!isProxmoxEnabled"
+                :required="isProxmoxEnabled"
+                placeholder="e.g. lostmypillow"
+              />
+            </div>
 
             <!-- PVE Token Username -->
             <div class="form-control">
@@ -176,7 +188,7 @@ const alwaysEnabledInput = ref("");
                 v-model="formData.pve_proxy"
                 class="input input-bordered w-full"
                 :disabled="!isProxmoxEnabled"
-                placeholder="e.g. pve1.kaowei.tw or pve2.kaowei.tw"
+                placeholder="e.g. pve1.kaowei.tw:3128 or pve2.kaowei.tw:3128"
               />
             </div>
 
@@ -188,6 +200,7 @@ const alwaysEnabledInput = ref("");
                 v-model="formData.spice_proxy"
                 class="input input-bordered w-full"
                 required
+                placeholder="e.g. 192.168.2.13:3128"
               />
             </div>
 
@@ -198,6 +211,7 @@ const alwaysEnabledInput = ref("");
                 type="password"
                 v-model="formData.vm_password"
                 class="input input-bordered w-full"
+                :disabled="isProxmoxEnabled"
               />
             </div>
           </div>
