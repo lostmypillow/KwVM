@@ -1,7 +1,5 @@
 import os
-import shutil
 import proxmoxer
-import signal
 import sys
 import keyboard
 import subprocess
@@ -126,36 +124,15 @@ def setup_proxmox_vm(vm_info: dict) -> str:
     return config_filepath
 
 
-def launch(file_path):
-    print("[CUSTOM] Running command: remote-viewer " + file_path)
-    virt_process = subprocess.Popen(["remote-viewer", "-v", "-k", "--spice-disable-effects=all", file_path])
-
-    try:
-        print("Running virt-viewer in kiosk mode. Press 'Control + Alt' to exit.")
-        while True:
-            # Change this to any key you want
-            if keyboard.is_pressed('ctrl+alt'):
-                print("Exit key pressed, closing virt-viewer.")
-                virt_process.terminate()
-                sys.exit(0)  # Terminate the virt-viewer process
-                break
-
-            # Check if the process has exited
-            if virt_process.poll() is not None:
-                print("Remote-viewer process has exited.")
-                break
-
-    except KeyboardInterrupt:
-        print("Process interrupted.")
-        virt_process.terminate()
 
 
-def launch_proxmox_desktop(filename):
-    ini = configparser.ConfigParser()
-    ini.read(os.path.join(config_folder_path, f"{filename}.ini"))
-    config_filepath = setup_proxmox_vm(
-        {key: value for key, value in ini.items(filename)})
-    launch(config_filepath)
+
+# def launch_proxmox_desktop(filename):
+#     ini = configparser.ConfigParser()
+#     ini.read(os.path.join(config_folder_path, f"{filename}.ini"))
+#     config_filepath = setup_proxmox_vm(
+#         {key: value for key, value in ini.items(filename)})
+#     launch(config_filepath)
 
 
 def setup(vm_info):

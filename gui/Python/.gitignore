@@ -8,3 +8,4 @@
 vdiclient.spec
 config.py
 .venv
+*.log

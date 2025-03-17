@@ -134,7 +134,7 @@ Rectangle {
                 id: status_view
                 objectName: "status_view"
                 visible: true
-                text: qsTr("待命中")
+                text: qsTr("準備就緒!")
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 36
                 font.family: "Sarasa Fixed TC"

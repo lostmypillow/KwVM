@@ -1,0 +1,8 @@
+[virt-viewer]
+type=spice
+fullscreen=1
+kiosk-quit=on-disconnect
+host=192.168.2.21
+port=8185
+password=8185
+title=Win7
