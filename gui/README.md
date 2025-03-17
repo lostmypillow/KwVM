@@ -1,4 +1,4 @@
-requires python < 3.13 >= 3.8, using 3.10.11
+requires python using 3.10.11
 
 set objectName in qml otherwise can't reference it in python
 
@@ -7,11 +7,11 @@ KwVM_GUIContent/Screen01.qml
 Python/main.py
 Python/controller.py
 
-0.2.0 changelog
-Switched to QT Quick (QML) + PySide6
-Improved API call (no longer freezes main loop)
+0.0.1 changelog
+Beta release. Can open both VMs. 0.0.2 will produce .desktop files on 'setup' input, build.sh for Linux, test with deployed API, better organized Python code for PySide6
 
-`pyside6-deploy --name kwmathconsult --mode standalone`
 `pyside6-rcc KwVM_GUI.qrc -o Python/autogen/resources.py`
+
+`cd Python && pyside6-deploy`
 
 Open file manager, then --> Edit--> Preferences --> General --> General : check option "Don't ask options on launch executable ...."

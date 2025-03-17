@@ -7,7 +7,7 @@ Window {
     height: mainScreen.height
 
     visible: true
-    title: "KwVM_GUI"
+    title: "高偉虛擬機"
 
     
 
