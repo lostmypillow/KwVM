@@ -151,18 +151,19 @@ Rectangle {
                 z: 100
                 pixelAligned: false
                 synchronousDrag: false
-                model: ListModel {// ListElement {
-                    //     name: "Red"
-                    // }
+                model: selectionModel
+                // model: ListModel {// ListElement {
+                //     //     name: "Red"
+                //     // }
 
-                    // ListElement {
-                    //     name: "Green"
-                    // }
+                //     // ListElement {
+                //     //     name: "Green"
+                //     // }
 
-                    // ListElement {
-                    //     name: "Blue"
-                    // }
-                }
+                //     // ListElement {
+                //     //     name: "Blue"
+                //     // }
+                // }
                 delegate: Item {
                     width: selection_view.width
                     height: 60
@@ -172,7 +173,9 @@ Rectangle {
                         spacing: 20
 
                         Text {
-                            text: name
+                            text:  model.vm_name
+                            font.pixelSize: 16
+                            font.family: "Sarasa Fixed TC"
                             Layout.alignment: Qt.AlignLeft
                             verticalAlignment: Text.AlignVCenter
                         }
@@ -185,6 +188,7 @@ Rectangle {
                             font.family: "Sarasa Fixed TC"
                             display: AbstractButton.TextBesideIcon
                             icon.source: "images/log-in.svg"
+                            onClicked: controller.select_vm(model.vm_name)
                         }
                     }
                 }
