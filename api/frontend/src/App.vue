@@ -27,7 +27,7 @@ const clear = () => {
 
 const submit = async () => {
   try {
-    const response = await axios.post("http://localhost:8000/vm", formData);
+    const response = await axios.post(`http://${window.location.host}/vm`, formData);
     console.log("Success:", response.data);
   } catch (error) {
     console.error("Error:", error);

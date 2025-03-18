@@ -1,16 +1,8 @@
-import json
 import logging
 from PySide6.QtCore import QObject, QUrl, QTimer, Signal
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
-from new_setup import setup
-logging.basicConfig(
-    filename="app.log",
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    encoding="utf-8"
-)
 
-class APIHandler(QObject):
+class APIController(QObject):
     task_complete = Signal(str)
 
     def __init__(self, parent=None):
@@ -50,9 +42,8 @@ class APIHandler(QObject):
         else:
             try:
                 response_data = self.current_reply.readAll().data().decode("utf-8")
-                response_json = json.loads(response_data)
-                config_filepath = setup(response_json[0])
-                self.task_complete.emit(config_filepath)
+                
+                self.task_complete.emit(response_data)
             except Exception as e:
                 logging.error(f"Error decoding response: {e}")
                 self.task_complete.emit('刷卡失敗')
