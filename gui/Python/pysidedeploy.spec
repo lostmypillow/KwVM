@@ -40,7 +40,7 @@ qml_files = KwVM_GUIContent\App.qml,KwVM_GUIContent\Screen01.ui.qml
 excluded_qml_plugins = QtCharts,QtSensors,QtWebEngine
 
 # qt modules used. comma separated
-modules = Gui,Network,QmlMeta,QuickControls2,OpenGL,Qml,Quick,QmlModels,QuickTemplates2,Core,QmlWorkerScript
+modules = Network,Qml,Core,QuickControls2,OpenGL,QuickTemplates2,QmlWorkerScript,Quick,Gui,QmlModels,QmlMeta
 
 # qt plugins used by the application
 plugins = platformthemes,xcbglintegrations,generic,imageformats,egldeviceintegrations,qmltooling,iconengines,platforms,accessiblebridge,networkaccess,scenegraph,platforminputcontexts,tls,platforms/darwin,networkinformation
@@ -64,7 +64,7 @@ plugins =
 macos.permissions = 
 
 # mode of using nuitka. accepts standalone or onefile. default is onefile.
-mode = onefile
+mode = standalone
 
 # (str) specify any extra nuitka arguments
 extra_args = --quiet --noinclude-qt-translations --include-module=proxmoxer.backends --include-module=proxmoxer.backends.https

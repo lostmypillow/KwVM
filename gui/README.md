@@ -13,6 +13,9 @@ Beta release. Can open both VMs. 0.0.2 will produce .desktop files on 'setup' in
 0.0.2 changelog
 Produces .desktop files on 'setup', prepare for test with deployed API
 
+0.0.3 ONLY API CHANGES
+Finalized basic API functionality, only hard coded data
+
 `pyside6-rcc KwVM_GUI.qrc -o Python/autogen/resources.py`
 
 `cd Python && pyside6-deploy`

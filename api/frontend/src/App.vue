@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import axios from "axios";
 
 const formData = reactive({
@@ -18,7 +18,7 @@ const formData = reactive({
 });
 
 const isProxmoxEnabled = computed(() => formData.pve === 1);
-
+const isEdit = ref(false)
 const clear = () => {
   Object.keys(formData).forEach((key) => {
     formData[key] = key === "pve" ? 0 : null;
@@ -26,25 +26,51 @@ const clear = () => {
 };
 
 const submit = async () => {
+  let response
   try {
-    const response = await axios.post(`http://${window.location.host}/vm`, formData);
-    console.log("Success:", response.data);
+    if( isEdit.value == false){
+    response = await axios.post(`http://${window.location.host}/vm`, formData);
+    } else {
+      response = await axios.put(`http://${window.location.host}/vm/${formData.id}`, formData);
+      isEdit.value = false
+    }
+      console.log("Success:", response.data);
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    await getAll()
+  }
+};
+
+const vmList = ref([])
+const getAll = async () => {
+  try {
+    const response = await axios.get(`http://192.168.2.17:8005/vm/all`);
+    vmList.value = response.data
   } catch (error) {
     console.error("Error:", error);
   }
 };
+const showEdit = (x) => {
+  isEdit.value = true
+  Object.assign(formData, x)
+  my_modal_1.showModal()
+  
+}
 const test = ref();
 
 const toggleEnabled = ref(false);
 const input1 = ref("");
 const input2 = ref("");
 const alwaysEnabledInput = ref("");
+onMounted(()=> getAll())
 </script>
 
 <template>
   <div class="navbar bg-base-100 shadow-sm">
     <div class="flex-1">
       <a class="btn btn-ghost text-xl">KwVM{{ test }}</a>
+      <!-- <button @click="getAll" class="btn btn-primary">Hi</button> -->
     </div>
     <div class="flex-none">
       <!-- Open the modal using ID.showModal() method -->
@@ -63,7 +89,7 @@ const alwaysEnabledInput = ref("");
         >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line></svg
-        >Add VM Configuration
+        >{{ isEdit? 'Edit' : 'Add'}} VM Configuration
       </button>
       <dialog id="my_modal_1" class="modal">
         <div class="modal-box">
@@ -250,31 +276,31 @@ const alwaysEnabledInput = ref("");
           <th>pve_proxy</th>
           <th>spice_proxy</th>
           <th>vm_password</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <!-- row 1 -->
-        <tr>
+        <tr v-for="x in vmList">
           <th>
-            <input
-              type="checkbox"
-              class="checkbox"
-              value="meow"
-              v-model="test"
-            />
+            {{x.id}}
           </th>
-          <td>Win10Max</td>
-          <td>201350</td>
-          <td>None</td>
-          <td>No</td>
-          <td>192.168.2.13</td>
-          <td>lostmypillow</td>
-          <td>lostmypillow</td>
-          <td>245a4a7a-581f-434d-be48-e393d9578aa0</td>
-          <td>301</td>
-          <td>pve1.kaowei.tw:3128</td>
-          <td>192.168.2.13:3128</td>
-          <td>None</td>
+          <td>{{x.vm_name}}</td>
+          <td>{{x.human_owner}}</td>
+          <td>{{x.pc_owner}}</td>
+          <td>{{x.pve}}</td>
+          <td>{{x.pve_host}}</td>
+          <td>{{x.pve_token_username}}</td>
+          <td>{{x.pve_token_name}}</td>
+          <td>{{x.pve_token_value}}</td>
+          <td>{{x.pve_vm_id}}</td>
+          <td>{{x.pve_proxy}}</td>
+          <td>{{x.spice_proxy}}</td>
+          <td>{{x.vm_password}}</td>
+          <td><button @click="showEdit(x)" class="btn btn-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+
+          </button></td>
         </tr>
         <!-- row 2 -->
 

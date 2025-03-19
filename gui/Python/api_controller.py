@@ -11,7 +11,7 @@ class APIController(QObject):
         self.current_reply = None
 
     def make_api_call(self, input_text):
-        url = QUrl(f"http://localhost:8000/vm/{input_text}")
+        url = QUrl(f"http://192.168.2.32:8005/vm/{input_text}")
         logging.info(f"Request URL: {url}")
 
         request = QNetworkRequest(url)
