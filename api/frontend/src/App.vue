@@ -45,7 +45,7 @@ const submit = async () => {
 const vmList = ref([])
 const getAll = async () => {
   try {
-    const response = await axios.get(`http://192.168.2.32:8005/vm/all`);
+    const response = await axios.get(`http://${window.location.host}/vm/all`);
     vmList.value = response.data
   } catch (error) {
     console.error("Error:", error);
