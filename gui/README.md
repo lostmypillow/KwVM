@@ -16,6 +16,10 @@ Produces .desktop files on 'setup', prepare for test with deployed API
 0.0.3 ONLY API CHANGES
 Finalized basic API functionality, only hard coded data
 
+0.0.4
+Added supplied spice proxy instead of pve proxy
+change to production values
+
 `pyside6-rcc KwVM_GUI.qrc -o Python/autogen/resources.py`
 
 `cd Python && pyside6-deploy`

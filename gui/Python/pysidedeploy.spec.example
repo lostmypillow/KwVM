@@ -1,7 +1,7 @@
 [app]
 
 # title of your application
-title = kwvm_0.0.1
+title = kwvm_0.0.4
 
 # project directory. the general assumption is that project_dir is the parent directory
 # of input_file
@@ -17,7 +17,7 @@ exec_directory = C:\Users\lost\Documents\PVE-VDIClient\gui
 project_file = 
 
 # application icon
-icon = C:\Users\lost\Documents\PVE-VDIClient\gui\Python\logo.ico
+icon = C:\Users\lost\Documents\PVE-VDIClient\gui\Python\logo.png
 
 [python]
 

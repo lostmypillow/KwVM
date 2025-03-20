@@ -111,6 +111,8 @@ class VMViewer(QThread):
 
         config_filepath = self._construct_config_info(vm_info=vm_info)
 
+        print(vm_info)
+
         proxmox_obj = proxmoxer.ProxmoxAPI(
             host=vm_info["pve_host"].split(':')[0],
             port=vm_info["pve_host"].split(':')[1],
@@ -119,8 +121,11 @@ class VMViewer(QThread):
             token_value=vm_info['pve_token_value'],
             verify_ssl=False,
         )
+        
         node_name = vm_info["pve_proxy"].split('.')[0]
+        print(f"Node name: {node_name}")
         available_nodes = proxmox_obj.cluster.resources.get(type='node')
+        print(f"Available nodes: {available_nodes}")
 
         if not any(node["node"] == node_name for node in available_nodes):
             print("Node not found")
@@ -133,13 +138,15 @@ class VMViewer(QThread):
                 print("Node not online")
                 raise NodeNotOnlineError(f"Node '{node_name}' is not online.")
 
-        config_contents = '\n'.join(f"{k} = {v}" for k, v in proxmox_obj.nodes(node_name).qemu(
-            str(vm_info["pve_vm_id"])).spiceproxy.post().items())
+        config_contents = '\n'.join(f"{k}={v}" for k, v in proxmox_obj.nodes(node_name).qemu(
+            str(vm_info["pve_vm_id"])).spiceproxy.post().items() if k != 'proxy' and k!= 'delete-this-file')
+        
+        config_contents += f"\nproxy={vm_info['spice_proxy']}\n"
 
         with open(config_filepath, 'w') as file:
             file.write("[virt-viewer]\n")
             file.write(config_contents)
-        print('im here')
+        print(config_contents)
 
         if vm_info['pc_owner'] != None:
 
