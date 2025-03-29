@@ -1,10 +1,32 @@
 import json
 import logging
 import socket
-from PySide6.QtCore import QObject, Slot, QTimer, Signal
+import subprocess
+from PySide6.QtCore import QObject, Slot, QTimer, Signal, QThread
 from api_controller import APIController
 from vm_viewer import VMViewer
 from vm_selection_model import VMSelectionModel
+
+
+class SetupThread(QThread):
+    update_status = Signal(str)
+    finished_signal = Signal()
+
+    def run(self):
+        self.update_status.emit("Updating system...")
+        subprocess.run("pkexec apt-get update -y", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.update_status.emit("Installing packages...")
+        
+        packages = ["python3.12-venv", "virt-viewer", "ccache", "libxcb-cursor0"]
+        for package in packages:
+            if subprocess.run(f"dpkg-query -l {package}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True).returncode != 0:
+                subprocess.run(f"pkexec apt-get install -y {package}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        subprocess.run(["pkexec", "chmod", "u+s", "/usr/bin/remote-viewer"],
+                       check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.update_status.emit("SUID set successfully.")
+        self.update_status.emit("Setup DONE")
+        self.finished_signal.emit()
 
 class CentralController(QObject):
     task_complete = Signal()
@@ -31,28 +53,37 @@ class CentralController(QObject):
         self.status_view = root.findChild(QObject, "status_view")
         self.input_id = root.findChild(QObject, "input_id")
         self.selection_view = root.findChild(QObject, "selection_view")
+        self.input_btn = root.findChild(QObject, "input_btn")
         self.input_id.accepted.connect(self.handle_input)
-
+        self.input_btn.clicked.connect(self.handle_input)
+    def update_status_view(self, text):
+        self.status_view.setProperty('text', text)
     @Slot()
     def handle_input(self):
-        self.status_view.setProperty('text', '驗證中...')
+        
         input_text = self.input_id.property('text')
         if input_text and input_text != '':
             if input_text == 'setup':
                 self.is_setup = True
                 input_text = socket.gethostname()
-                print(input_text)
-            self.api_controller.make_api_call(input_text)
+                self.setup_thread = SetupThread()
+                self.setup_thread.update_status.connect(self.update_status_view)
+                self.setup_thread.finished_signal.connect(lambda: self.api_controller.make_api_call(input_text))
+                self.setup_thread.start()
+                
+            else:
+                self.status_view.setProperty('text', '驗證中...')
+                self.api_controller.make_api_call(input_text)
         elif not input_text:
             self.status_view.setProperty('text', f'驗證失敗: {input_text} 為無效字元')
         elif input_text == '':
             self.status_view.setProperty('text', f'驗證失敗: {input_text} 不能為空格')
         self.input_id.setProperty('text', '')
-
     @Slot(str)
     def on_api_complete(self, response_data):
         try:
             self.response_list: list[dict] = json.loads(response_data)
+            print(f'response list = {self.response_list}')
             if len(self.response_list) == 1:
                 self.selected_dict = self.response_list[0]
                 print(self.selected_dict)
@@ -63,11 +94,15 @@ class CentralController(QObject):
                     dummy_viewer.setup(self.selected_dict)
                     self.status_view.setProperty('text', 'Setup Complete')
 
-            else:
-                self.response_list
+            elif len(self.response_list) > 0:
                 self.status_view.setProperty('visible', 'false')
                 self._model.setData(self.response_list)
                 self.selection_view.setProperty('visible', 'true')
+            else:
+                self.status_view.setProperty('text', '驗證失敗: No VMs')
+                QTimer.singleShot(
+                3000, lambda: self.status_view.setProperty('text', '準備就緒!'))
+
         except Exception as e:
             self.status_view.setProperty('text', '驗證失敗: API 無回應')
             QTimer.singleShot(

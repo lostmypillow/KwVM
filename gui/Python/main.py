@@ -80,7 +80,7 @@ def main():
 
     QTimer.singleShot(0, controller.run_vm_now)
 
-    sys.exit(app.exec())
+    app.exec()
 
 
 if __name__ == '__main__':
