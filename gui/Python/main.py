@@ -13,11 +13,38 @@ from PySide6.QtCore import QObject, QTimer
 from vm_selection_model import VMSelectionModel
 from central_controller import CentralController
 from vm_viewer import VMViewer
+import subprocess
 
 # Configure logging
 
+version= "0.0.5"
 
 def main():
+    print(f"KwVM {version} starting...")
+    print("Installing packages...")
+    packages = ["python3.12-venv", "virt-viewer", "ccache", "libxcb-cursor0"]
+    for package in packages:
+        result = subprocess.run(
+            ["dpkg-query", "-W", "-f=${Status}", package],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True
+        )
+        if "install ok installed" not in result.stdout:
+            subprocess.run(
+                ["pkexec", "apt-get", "install", "-y", package],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+
+    viewer_path = "/usr/bin/remote-viewer"
+    if not (os.stat(viewer_path).st_mode & 0o4000):
+        subprocess.run(
+            ["pkexec", "chmod", "u+s", viewer_path],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
     misc_files_location = os.path.join(os.path.expanduser("~"), '.kwvm')
 
     os.makedirs(misc_files_location, exist_ok=True)

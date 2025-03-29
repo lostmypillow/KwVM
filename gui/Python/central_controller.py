@@ -8,25 +8,6 @@ from vm_viewer import VMViewer
 from vm_selection_model import VMSelectionModel
 
 
-class SetupThread(QThread):
-    update_status = Signal(str)
-    finished_signal = Signal()
-
-    def run(self):
-        self.update_status.emit("Updating system...")
-        subprocess.run("pkexec apt-get update -y", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        self.update_status.emit("Installing packages...")
-        
-        packages = ["python3.12-venv", "virt-viewer", "ccache", "libxcb-cursor0"]
-        for package in packages:
-            if subprocess.run(f"dpkg-query -l {package}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True).returncode != 0:
-                subprocess.run(f"pkexec apt-get install -y {package}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        
-        subprocess.run(["pkexec", "chmod", "u+s", "/usr/bin/remote-viewer"],
-                       check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        self.update_status.emit("SUID set successfully.")
-        self.update_status.emit("Setup DONE")
-        self.finished_signal.emit()
 
 class CentralController(QObject):
     task_complete = Signal()
@@ -66,11 +47,7 @@ class CentralController(QObject):
             if input_text == 'setup':
                 self.is_setup = True
                 input_text = socket.gethostname()
-                self.setup_thread = SetupThread()
-                self.setup_thread.update_status.connect(self.update_status_view)
-                self.setup_thread.finished_signal.connect(lambda: self.api_controller.make_api_call(input_text))
-                self.setup_thread.start()
-                
+                self.api_controller.make_api_call(input_text)
             else:
                 self.status_view.setProperty('text', '驗證中...')
                 self.api_controller.make_api_call(input_text)
