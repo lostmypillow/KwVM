@@ -5,24 +5,24 @@ title = 高偉虛擬機
 
 # project directory. the general assumption is that project_dir is the parent directory
 # of input_file
-project_dir = /home/test/KwVDI/gui
+project_dir = /home/test/Documents/KwVDI/gui
 
 # source file path
-input_file = /home/test/KwVDI/gui/Python/main.py
+input_file = /home/test/Documents/KwVDI/gui/Python/main.py
 
 # directory where exec is stored
-exec_directory = /home/test/KwVDI/gui
+exec_directory = /home/test/Documents/KwVDI/gui
 
 # path to .pyproject project file
 project_file = 
 
 # application icon
-icon = /home/test/KwVDI/gui/Python/logo.png
+icon = /home/test/Documents/KwVDI/gui/Python/logo.png
 
 [python]
 
 # python path
-python_path = /home/test/KwVDI/gui/Python/.venv/bin/python3
+python_path = /home/test/Documents/KwVDI/gui/Python/.venv/bin/python
 
 # python packages to install
 packages = Nuitka==2.4.8
@@ -34,16 +34,16 @@ android_packages = buildozer==1.5.0,cython==0.29.33
 
 # comma separated path to qml files required
 # normally all the qml files required by the project are added automatically
-qml_files = KwVM_GUIContent/App.qml,KwVM_GUIContent/Screen01.ui.qml
+qml_files = KwVM_GUIContent/Screen01.ui.qml,KwVM_GUIContent/App.qml
 
 # excluded qml plugin binaries
 excluded_qml_plugins = QtCharts,QtSensors,QtWebEngine
 
 # qt modules used. comma separated
-modules = DBus,QuickControls2,QmlWorkerScript,QmlMeta,OpenGL,Core,QuickTemplates2,Qml,Network,QmlModels,Gui,Quick
+modules = Quick,Network,Gui,QmlMeta,QmlModels,QuickControls2,OpenGL,QuickTemplates2,Qml,DBus,Core,QmlWorkerScript
 
 # qt plugins used by the application
-plugins = networkaccess,platforminputcontexts,platformthemes,egldeviceintegrations,accessiblebridge,iconengines,platforms,tls,imageformats,networkinformation,generic,platforms/darwin,xcbglintegrations,qmltooling,scenegraph
+plugins = platforms,xcbglintegrations,scenegraph,tls,platforms/darwin,imageformats,egldeviceintegrations,networkinformation,qmltooling,networkaccess,accessiblebridge,iconengines,platformthemes,platforminputcontexts,generic
 
 [android]
 
