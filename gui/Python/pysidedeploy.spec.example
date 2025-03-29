@@ -1,7 +1,7 @@
 [app]
 
 # title of your application
-title = kwvm_0.0.4
+title = 高偉虛擬機
 
 # project directory. the general assumption is that project_dir is the parent directory
 # of input_file

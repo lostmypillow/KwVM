@@ -4,8 +4,9 @@ import os
 import proxmoxer
 import sys
 import json
-import keyboard
+
 import configparser
+from pynput import keyboard
 from PySide6.QtCore import QThread
 config_folder_path = os.path.join(os.path.expanduser("~"), '.kwvm')
 example_config_filepath = os.path.join(os.getcwd(), "client.vv.example")
@@ -35,32 +36,41 @@ class VMViewer(QThread):
         try:
             logging.info(
                 f"Launching setup with config: {self.config_filepath}")
-            print(f"Running command: remote-viewer  -v -k --spice-disable-effects=all {self.config_filepath}")
-            print(1)
+            logging.info(f"Running command: remote-viewer  -v -k --spice-disable-effects=all {self.config_filepath}")
+            logging.info(1)
 
             self.virt_process = subprocess.Popen(
                 ["remote-viewer", "-v", "-k",
                     "--spice-disable-effects=all", self.config_filepath],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
             )
-            print(2)
-            stdout, stderr = self.virt_process.communicate()
-            print(3)
+            logging.info(2)
+      
+            logging.info(3)
          
-            print("Running virt-viewer in kiosk mode. Press 'Control + Alt' to exit.")
+            logging.info("Running virt-viewer in kiosk mode. Press 'Control + Alt' to exit.")
 
-            while self.virt_process.poll() is None and self.running:
-                self.msleep(100)
-                if keyboard.is_pressed('ctrl+alt'):
-                    print("Exit key pressed, closing virt-viewer.")
-                    self.virt_process.terminate()
-                    raise KeyboardInterrupt  # Terminate the virt-viewer process
+            exit_keys = {keyboard.Key.ctrl_l, keyboard.Key.alt_l}
+            pressed_keys = set()
 
+            listener = keyboard.Listener(
+                on_press=lambda key: pressed_keys.add(key) if key in exit_keys else None,
+                on_release=lambda key: pressed_keys.discard(key) if key in exit_keys else None
+            )
+            listener.start()
+
+            try:
+                while self.virt_process.poll() is None and self.running:
+                    self.msleep(100)
+                    if exit_keys.issubset(pressed_keys):
+                        logging.info("Exit key combo pressed, closing virt-viewer.")
+                        self.virt_process.terminate()
+                        raise KeyboardInterrupt
+            finally:
+                listener.stop()
             logging.info("Remote-viewer process has exited.")
 
         except Exception as e:
-            print(e)
+            logging.info(e)
             logging.error(f"Worker error: {e}")
 
         finally:
@@ -115,7 +125,7 @@ class VMViewer(QThread):
 
         config_filepath = self._construct_config_info(vm_info=vm_info)
 
-        print(vm_info)
+        logging.info(vm_info)
 
         proxmox_obj = proxmoxer.ProxmoxAPI(
             host=vm_info["pve_host"].split(':')[0],
@@ -127,19 +137,19 @@ class VMViewer(QThread):
         )
         
         node_name = vm_info["pve_proxy"].split('.')[0]
-        print(f"Node name: {node_name}")
+        logging.info(f"Node name: {node_name}")
         available_nodes = proxmox_obj.cluster.resources.get(type='node')
-        print(f"Available nodes: {available_nodes}")
+        logging.info(f"Available nodes: {available_nodes}")
 
         if not any(node["node"] == node_name for node in available_nodes):
-            print("Node not found")
+            logging.info("Node not found")
             raise NodeNotFoundError(f"Node '{node_name}' does not exist.")
         else:
             # Node does exist, check if it's online
             existing_node = next(
                 online_node for online_node in available_nodes if online_node["node"] == node_name)
             if existing_node['status'] != 'online':
-                print("Node not online")
+                logging.info("Node not online")
                 raise NodeNotOnlineError(f"Node '{node_name}' is not online.")
 
         config_contents = '\n'.join(f"{k}={v}" for k, v in proxmox_obj.nodes(node_name).qemu(
@@ -150,13 +160,13 @@ class VMViewer(QThread):
         with open(config_filepath, 'w') as file:
             file.write("[virt-viewer]\n")
             file.write(config_contents)
-        print(config_contents)
+        logging.info(config_contents)
 
         if vm_info['pc_owner'] != None:
             try:
                 self.create_desktop_file(config_filepath=config_filepath, vm_info=vm_info)
             except Exception as e:
-                print(e)
+                logging.info(e)
 
             
         return config_filepath
@@ -171,13 +181,13 @@ class VMViewer(QThread):
         json_filepath = config_filepath[:-3] + '.json'
         with open(json_filepath, 'w') as json_file:
             json.dump(vm_info, json_file, indent=4)
-            print(f'Saved JSON to {json_filepath}')
+            logging.info(f'Saved JSON to {json_filepath}')
 
             desktop_content = f"""[Desktop Entry]
 Version=0.0.6-alpha1
 Name={vm_info['vm_name']}
 Comment=Launch {vm_info['vm_name']} Directly with KwVM
-Exec=./kwvm -p {json_filepath}
+Exec=./高偉虛擬機.bin -p {json_filepath}
 Terminal=true
 Type=Application
 Categories=Utility;
@@ -187,11 +197,14 @@ Categories=Utility;
 
             desktop_folder = desktop_folder_en if os.path.exists(desktop_folder_en) else desktop_folder_zh
 
-            desktop_filepath = os.path.join(desktop_folder, "桌面", vm_info["vm_name"] + '.desktop')
+            desktop_filepath = os.path.join(desktop_folder,  vm_info["vm_name"] + '.desktop')
 
             with open(desktop_filepath, 'w')as desktop_file:
                 desktop_file.write(desktop_content)
-            print('Desktop file created')
+            logging.info('Desktop file created')
+            subprocess.run([
+            'gio', 'set', desktop_filepath, 'metadata::trusted', 'yes'
+        ], check=True)
             if os.name != 'nt':  # Skip this for Windows
                 os.chmod(desktop_filepath, 0o755)
 

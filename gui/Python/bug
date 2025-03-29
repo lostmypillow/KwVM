@@ -1,0 +1,2 @@
+python3-dev, ccache
+FATAL: Automatic detection of static libpython failed. Nuitka on Debian-Python needs package 'python3-dev' installed. Disable with '--static-libpython=no' if you don't want to install it.

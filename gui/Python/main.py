@@ -17,11 +17,11 @@ import subprocess
 
 # Configure logging
 
-version= "0.0.5"
+version= "0.0.6-alpha1"
 
 def main():
-    print(f"KwVM {version} starting...")
-    print("Installing packages...")
+    logging.info(f"KwVM {version} starting...")
+    logging.info("Installing packages...")
     packages = ["python3.12-venv", "virt-viewer", "ccache", "libxcb-cursor0"]
     for package in packages:
         result = subprocess.run(

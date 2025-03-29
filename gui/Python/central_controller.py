@@ -60,14 +60,15 @@ class CentralController(QObject):
     def on_api_complete(self, response_data):
         try:
             self.response_list: list[dict] = json.loads(response_data)
-            print(f'response list = {self.response_list}')
+            logging.info(f'response list = {self.response_list}')
             if len(self.response_list) == 1:
                 self.selected_dict = self.response_list[0]
-                print(self.selected_dict)
+                logging.info(self.selected_dict)
                 if self.is_setup == False:
                     self.launch_remote_viewer()
                 else:
                     dummy_viewer = VMViewer()
+                    logging.info(self.selected_dict)
                     dummy_viewer.setup(self.selected_dict)
                     self.status_view.setProperty('text', 'Setup Complete')
 
