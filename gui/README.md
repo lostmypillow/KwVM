@@ -20,6 +20,12 @@ Finalized basic API functionality, only hard coded data
 Added supplied spice proxy instead of pve proxy
 change to production values
 
+0.0.5
+Moved packages installation into "setup" in CentralController
+
+0.0.6-alpha1
+Moved package installation to start of program and added checks to avoid multiple sudo prompts
+
 `pyside6-rcc KwVM_GUI.qrc -o Python/autogen/resources.py`
 
 `cd Python && pyside6-deploy`

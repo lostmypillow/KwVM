@@ -35,8 +35,7 @@ class VMViewer(QThread):
         try:
             logging.info(
                 f"Launching setup with config: {self.config_filepath}")
-            print("[CUSTOM] Running command: remote-viewer " +
-                  self.config_filepath)
+            print(f"Running command: remote-viewer  -v -k --spice-disable-effects=all {self.config_filepath}")
             print(1)
 
             self.virt_process = subprocess.Popen(
@@ -175,7 +174,7 @@ class VMViewer(QThread):
             print(f'Saved JSON to {json_filepath}')
 
             desktop_content = f"""[Desktop Entry]
-Version=0.0.2
+Version=0.0.6-alpha1
 Name={vm_info['vm_name']}
 Comment=Launch {vm_info['vm_name']} Directly with KwVM
 Exec=./kwvm -p {json_filepath}
