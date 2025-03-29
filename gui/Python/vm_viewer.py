@@ -37,14 +37,18 @@ class VMViewer(QThread):
                 f"Launching setup with config: {self.config_filepath}")
             print("[CUSTOM] Running command: remote-viewer " +
                   self.config_filepath)
+            print(1)
 
             self.virt_process = subprocess.Popen(
                 ["remote-viewer", "-v", "-k",
                     "--spice-disable-effects=all", self.config_filepath],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
             )
-
+            print(2)
+            stdout, stderr = self.virt_process.communicate()
+            print(3)
+         
             print("Running virt-viewer in kiosk mode. Press 'Control + Alt' to exit.")
 
             while self.virt_process.poll() is None and self.running:
@@ -57,12 +61,14 @@ class VMViewer(QThread):
             logging.info("Remote-viewer process has exited.")
 
         except Exception as e:
+            print(e)
             logging.error(f"Worker error: {e}")
 
         finally:
             if self.virt_process and self.virt_process.poll() is None:
                 self.virt_process.terminate()
                 self.virt_process.wait()
+            
 
             self.on_complete.emit()
 
@@ -102,8 +108,7 @@ class VMViewer(QThread):
 ''')
 
         if vm_info['pc_owner'] is not None:
-            pass
-            # TODO create desktop file pointing to the vv
+            self.create_desktop_file(config_filepath=config_filepath, vm_info=vm_info)
 
         return config_filepath
 
@@ -149,11 +154,24 @@ class VMViewer(QThread):
         print(config_contents)
 
         if vm_info['pc_owner'] != None:
+            try:
+                self.create_desktop_file(config_filepath=config_filepath, vm_info=vm_info)
+            except Exception as e:
+                print(e)
 
-            json_filepath = config_filepath[:-3] + '.json'
+            
+        return config_filepath
 
-            with open(json_filepath, 'w') as json_file:
-                json.dump(vm_info, json_file, indent=4)
+    def setup(self, vm_info: dict):
+        if vm_info['pve'] == 1:
+            self.config_filepath = self._setup_proxmox_vm(vm_info)
+        elif vm_info['pve'] == 0:
+            self.config_filepath = self._setup_custom_vm(vm_info=vm_info)
+    
+    def create_desktop_file(self, config_filepath, vm_info):
+        json_filepath = config_filepath[:-3] + '.json'
+        with open(json_filepath, 'w') as json_file:
+            json.dump(vm_info, json_file, indent=4)
             print(f'Saved JSON to {json_filepath}')
 
             desktop_content = f"""[Desktop Entry]
@@ -165,19 +183,16 @@ Terminal=true
 Type=Application
 Categories=Utility;
 """
+            desktop_folder_en = os.path.join(os.path.expanduser("~"), "Desktop")
+            desktop_folder_zh = os.path.join(os.path.expanduser("~"), "桌面")  # Traditional Chinese Desktop folder
 
-            desktop_filepath = os.path.join(os.path.expanduser(
-                "~"), "Desktop", vm_info["vm_name"] + '.desktop')
+            desktop_folder = desktop_folder_en if os.path.exists(desktop_folder_en) else desktop_folder_zh
+
+            desktop_filepath = os.path.join(desktop_folder, "桌面", vm_info["vm_name"] + '.desktop')
 
             with open(desktop_filepath, 'w')as desktop_file:
                 desktop_file.write(desktop_content)
             print('Desktop file created')
             if os.name != 'nt':  # Skip this for Windows
-                os.chmod(desktop_file_path, 0o755)
-        return config_filepath
+                os.chmod(desktop_filepath, 0o755)
 
-    def setup(self, vm_info: dict):
-        if vm_info['pve'] == 1:
-            self.config_filepath = self._setup_proxmox_vm(vm_info)
-        elif vm_info['pve'] == 0:
-            self.config_filepath = self._setup_custom_vm(vm_info=vm_info)
