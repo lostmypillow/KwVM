@@ -17,9 +17,10 @@ const formData = reactive({
   vm_password: null,
 });
 
-const isProxmoxEnabled = computed(() => formData.pve === 1);
+const isProxmoxEnabled = computed(() => formData.pve === true);
 const isEdit = ref(false)
 const clear = () => {
+  isEdit.value = false
   Object.keys(formData).forEach((key) => {
     formData[key] = key === "pve" ? 0 : null;
   });
@@ -55,6 +56,7 @@ const showEdit = (x) => {
   isEdit.value = true
   Object.assign(formData, x)
   my_modal_1.showModal()
+  console.log(formData)
   
 }
 const test = ref();
@@ -89,25 +91,24 @@ onMounted(()=> getAll())
         >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line></svg
-        >{{ isEdit? 'Edit' : 'Add'}} VM Configuration
+        >Add VM Configuration
       </button>
       <dialog id="my_modal_1" class="modal">
         <div class="modal-box">
-          <h3 class="text-lg font-bold">Add VM Configuration</h3>
-          <div class="p-6 max-w-lg mx-auto space-y-4">
-            <!-- PVE Toggle -->
-            <div class="form-control">
-              <label class="label cursor-pointer">
-                <span class="label-text">Enable if this is a Proxmox VM</span>
+          <div class="join">
+          <h3 class="text-lg font-bold">{{ isEdit? 'Edit' : 'Add'}} VM Configuration</h3>
+          <label class="label cursor-pointer pl-4">
+                <span class="label-text">Enable if it's a Proxmox VM</span>
                 <input
                   type="checkbox"
                   v-model="formData.pve"
                   class="toggle"
-                  :true-value="1"
-                  :false-value="0"
+                  :true-value="true"
+                  :false-value="false"
                 />
-              </label>
-            </div>
+              </label></div>
+          <div class="p-6 max-w-lg mx-auto space-y-4">
+            <div class="join">
             <!-- VM Name -->
             <div class="form-control">
               <label class="label">VM Name</label>
@@ -118,7 +119,12 @@ onMounted(()=> getAll())
                 required
               />
             </div>
-
+             <!-- PVE Toggle -->
+             <div class="form-control">
+              
+            </div>
+    
+       
             <!-- Human Owner -->
             <div class="form-control">
               <label class="label">Human Owner</label>
@@ -140,6 +146,7 @@ onMounted(()=> getAll())
                 placeholder="e.g. DESKTOP-KWMIS"
               />
             </div>
+            </div>
 
             <!-- PVE hOST -->
             <div class="form-control">
@@ -153,7 +160,7 @@ onMounted(()=> getAll())
                 placeholder="e.g. lostmypillow"
               />
             </div>
-
+            <div class="join">
             <!-- PVE Token Username -->
             <div class="form-control">
               <label class="label">PVE Token Username</label>
@@ -179,7 +186,7 @@ onMounted(()=> getAll())
                 placeholder="e.g. lostmypillow"
               />
             </div>
-
+</div>
             <!-- PVE Token Value -->
             <div class="form-control">
               <label class="label">PVE Token Value</label>
@@ -205,7 +212,7 @@ onMounted(()=> getAll())
                 placeholder="e.g. 301"
               />
             </div>
-
+            <div class="join">
             <!-- PVE Proxy -->
             <div class="form-control">
               <label class="label">PVE Proxy</label>
@@ -229,12 +236,13 @@ onMounted(()=> getAll())
                 placeholder="e.g. 192.168.2.13:3128"
               />
             </div>
+</div>
 
             <!-- VM Password -->
             <div class="form-control">
               <label class="label">VM Password</label>
               <input
-                type="password"
+                type="text"
                 v-model="formData.vm_password"
                 class="input input-bordered w-full"
                 :disabled="isProxmoxEnabled"
@@ -246,8 +254,8 @@ onMounted(()=> getAll())
               <!-- if there is a button in form, it will close the modal -->
               <!-- Submit & Clear Buttons -->
               <div class="flex gap-4 mt-4">
-                <button @click="submit" class="btn btn-primary">Submit</button>
-                <button @click="clear" class="btn btn-secondary">Clear</button>
+                <button @click="submit" class="btn btn-success"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg>Submit</button>
+                <button @click="clear" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Cancel</button>
               </div>
             </form>
           </div>
@@ -265,25 +273,30 @@ onMounted(()=> getAll())
         <tr>
           <th></th>
           <th>vm_name</th>
-          <th>human_owner</th>
-          <th>pc_owner</th>
+          <th>human<br>owner</th>
+          <th>pc<br>owner</th>
           <th>pve?</th>
-          <th>pve_host</th>
-          <th>pve_token_username</th>
-          <th>pve_token_name</th>
-          <th>pve_token_value</th>
-          <th>pve_vm_id</th>
+          <th>pve<br>host</th>
+          <th>pve<br>token<br>username</th>
+          <th>pve <br>
+            token <br>
+
+            name</th>
+          <th>pve<br>token<br>value</th>
+          <th>pve<br>vm_id</th>
           <th>pve_proxy</th>
           <th>spice_proxy</th>
-          <th>vm_password</th>
-          <th></th>
+          <th>vm<br>password</th>
         </tr>
       </thead>
       <tbody>
         <!-- row 1 -->
         <tr v-for="x in vmList">
           <th>
-            {{x.id}}
+            <button @click="showEdit(x)" class="btn btn-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+
+          </button>
           </th>
           <td>{{x.vm_name}}</td>
           <td>{{x.human_owner}}</td>
@@ -297,10 +310,6 @@ onMounted(()=> getAll())
           <td>{{x.pve_proxy}}</td>
           <td>{{x.spice_proxy}}</td>
           <td>{{x.vm_password}}</td>
-          <td><button @click="showEdit(x)" class="btn btn-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-
-          </button></td>
         </tr>
         <!-- row 2 -->
 
