@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/vm/": {
-        target: "http://localhost:8000",
+        target: "http://192.168.2.17:8005",
         changeOrigin: true,
       },
     },
