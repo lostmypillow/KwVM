@@ -37,10 +37,15 @@ class CentralController(QObject):
         self.input_btn = root.findChild(QObject, "input_btn")
         self.input_id.accepted.connect(self.handle_input)
         self.input_btn.clicked.connect(self.handle_input)
+        self.status_view.setProperty('text', '設定中')
+        self.input_id.setProperty('readOnly', True)
+        self.is_setup = True
+        self.api_controller.make_api_call(socket.gethostname())
     def update_status_view(self, text):
         self.status_view.setProperty('text', text)
     @Slot()
     def handle_input(self):
+        self.input_id.setProperty('readOnly', True)
         
         input_text = self.input_id.property('text')
         if input_text and input_text != '':
@@ -52,9 +57,10 @@ class CentralController(QObject):
                 self.status_view.setProperty('text', '驗證中...')
                 self.api_controller.make_api_call(input_text)
         elif not input_text:
-            self.status_view.setProperty('text', f'驗證失敗: {input_text} 為無效字元')
-        elif input_text == '':
-            self.status_view.setProperty('text', f'驗證失敗: {input_text} 不能為空格')
+            if input_text == '':
+                self.status_view.setProperty('text', f'驗證失敗: {input_text} 不能為空格')
+            else:
+                self.status_view.setProperty('text', f'驗證失敗: {input_text} 為無效字元')
         self.input_id.setProperty('text', '')
     @Slot(str)
     def on_api_complete(self, response_data):
@@ -70,14 +76,16 @@ class CentralController(QObject):
                     dummy_viewer = VMViewer()
                     logging.info(self.selected_dict)
                     dummy_viewer.setup(self.selected_dict)
-                    self.status_view.setProperty('text', 'Setup Complete')
+                    self.status_view.setProperty('text', '設定完成!')
+                    QTimer.singleShot(
+                3000, lambda: self.status_view.setProperty('text', '準備就緒!'))
 
             elif len(self.response_list) > 0:
                 self.status_view.setProperty('visible', 'false')
                 self._model.setData(self.response_list)
                 self.selection_view.setProperty('visible', 'true')
             else:
-                self.status_view.setProperty('text', '驗證失敗: No VMs')
+                self.status_view.setProperty('text', '驗證失敗: 沒有虛擬機!')
                 QTimer.singleShot(
                 3000, lambda: self.status_view.setProperty('text', '準備就緒!'))
 
@@ -85,6 +93,9 @@ class CentralController(QObject):
             self.status_view.setProperty('text', '驗證失敗: API 無回應')
             QTimer.singleShot(
                 3000, lambda: self.status_view.setProperty('text', '準備就緒!'))
+        finally:
+            self.input_id.setProperty('readOnly', False)
+        
     
     @Slot()
     def on_task_complete(self):

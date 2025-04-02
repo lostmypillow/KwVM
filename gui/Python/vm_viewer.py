@@ -184,7 +184,7 @@ class VMViewer(QThread):
             logging.info(f'Saved JSON to {json_filepath}')
 
             desktop_content = f"""[Desktop Entry]
-Version=0.0.6-alpha1
+Version=0.0.8
 Name={vm_info['vm_name']}
 Comment=Launch {vm_info['vm_name']} Directly with KwVM
 Exec=./高偉虛擬機.bin -p {json_filepath}

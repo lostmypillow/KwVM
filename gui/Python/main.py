@@ -17,34 +17,11 @@ import subprocess
 
 # Configure logging
 
-version= "0.0.6-alpha1"
+version= "0.0.8"
 
 def main():
     logging.info(f"KwVM {version} starting...")
-    logging.info("Installing packages...")
-    packages = ["python3.12-venv", "virt-viewer", "ccache", "libxcb-cursor0"]
-    for package in packages:
-        result = subprocess.run(
-            ["dpkg-query", "-W", "-f=${Status}", package],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            text=True
-        )
-        if "install ok installed" not in result.stdout:
-            subprocess.run(
-                ["pkexec", "apt-get", "install", "-y", package],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
-            )
-
-    viewer_path = "/usr/bin/remote-viewer"
-    if not (os.stat(viewer_path).st_mode & 0o4000):
-        subprocess.run(
-            ["pkexec", "chmod", "u+s", viewer_path],
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
+    
     misc_files_location = os.path.join(os.path.expanduser("~"), '.kwvm')
 
     os.makedirs(misc_files_location, exist_ok=True)
