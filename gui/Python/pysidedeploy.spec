@@ -40,7 +40,7 @@ qml_files = KwVM_GUIContent/Screen01.ui.qml,KwVM_GUIContent/App.qml
 excluded_qml_plugins = QtCharts,QtSensors,QtWebEngine
 
 # qt modules used. comma separated
-modules = Quick,Network,Gui,QmlMeta,QmlModels,QuickControls2,OpenGL,QuickTemplates2,Qml,DBus,Core,QmlWorkerScript
+modules = Quick,Qml,QmlMeta,Network,QuickControls2,QuickTemplates2,QmlModels,Core,QmlWorkerScript,OpenGL,DBus,Gui
 
 # qt plugins used by the application
 plugins = platforms,xcbglintegrations,scenegraph,tls,platforms/darwin,imageformats,egldeviceintegrations,networkinformation,qmltooling,networkaccess,accessiblebridge,iconengines,platformthemes,platforminputcontexts,generic
