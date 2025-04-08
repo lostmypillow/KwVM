@@ -5,24 +5,24 @@ title = 高偉虛擬機
 
 # project directory. the general assumption is that project_dir is the parent directory
 # of input_file
-project_dir = /home/test/Documents/KwVDI/gui
+project_dir = /home/jl/Documents/KwVM/gui
 
 # source file path
-input_file = /home/test/Documents/KwVDI/gui/Python/main.py
+input_file = /home/jl/Documents/KwVM/gui/Python/main.py
 
 # directory where exec is stored
-exec_directory = /home/test/Documents/KwVDI/gui
+exec_directory = /home/jl/Documents/KwVM/gui
 
 # path to .pyproject project file
 project_file = 
 
 # application icon
-icon = /home/test/Documents/KwVDI/gui/Python/logo.png
+icon = /home/jl/Documents/KwVM/.venv/lib/python3.11/site-packages/PySide6/scripts/deploy_lib/pyside_icon.jpg
 
 [python]
 
 # python path
-python_path = /home/test/Documents/KwVDI/gui/Python/.venv/bin/python
+python_path = /home/jl/Documents/KwVM/.venv/bin/python3
 
 # python packages to install
 packages = Nuitka==2.4.8
@@ -34,16 +34,16 @@ android_packages = buildozer==1.5.0,cython==0.29.33
 
 # comma separated path to qml files required
 # normally all the qml files required by the project are added automatically
-qml_files = KwVM_GUIContent/Screen01.ui.qml,KwVM_GUIContent/App.qml
+qml_files = KwVM_GUIContent/App.qml,KwVM_GUIContent/Screen01.ui.qml
 
 # excluded qml plugin binaries
-excluded_qml_plugins = QtCharts,QtSensors,QtWebEngine
+excluded_qml_plugins = QtCharts,QtQuick3D,QtSensors,QtTest,QtWebEngine
 
 # qt modules used. comma separated
-modules = Quick,Qml,QmlMeta,Network,QuickControls2,QuickTemplates2,QmlModels,Core,QmlWorkerScript,OpenGL,DBus,Gui
+modules = Core,Qml,OpenGL,Network,QmlModels,Gui,QmlWorkerScript,DBus,QuickControls2,QuickTemplates2,QmlMeta,Quick
 
 # qt plugins used by the application
-plugins = platforms,xcbglintegrations,scenegraph,tls,platforms/darwin,imageformats,egldeviceintegrations,networkinformation,qmltooling,networkaccess,accessiblebridge,iconengines,platformthemes,platforminputcontexts,generic
+plugins = qmltooling,tls,generic,platforminputcontexts,accessiblebridge,platforms/darwin,platformthemes,imageformats,networkinformation,platforms,scenegraph,iconengines,xcbglintegrations,egldeviceintegrations,networkaccess
 
 [android]
 
@@ -67,7 +67,7 @@ macos.permissions =
 mode = onefile
 
 # (str) specify any extra nuitka arguments
-extra_args = --quiet --noinclude-qt-translations --include-module=proxmoxer.backends --include-module=proxmoxer.backends.https
+extra_args = --jobs=16 --include-module=proxmoxer.backends --include-module=proxmoxer.backends.https --quiet --noinclude-qt-translations
 
 [buildozer]
 

@@ -12,7 +12,7 @@ class APIController(QObject):
 
     def make_api_call(self, input_text):
         url = QUrl(f"http://192.168.2.17:8005/vm/{input_text}")
-        logging.info(f"Request URL: {url}")
+        print(f"Request URL: {url}")
 
         request = QNetworkRequest(url)
         self.current_reply = self.network_manager.get(request)
@@ -28,7 +28,7 @@ class APIController(QObject):
             return
         
         if self.current_reply and self.current_reply.isRunning():
-            logging.info("Request timed out.")
+            print("Request timed out.")
             self.current_reply.abort()
 
     def handle_api_response(self):

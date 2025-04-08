@@ -1,8 +1,7 @@
 import json
 import logging
 import socket
-import subprocess
-from PySide6.QtCore import QObject, Slot, QTimer, Signal, QThread
+from PySide6.QtCore import QObject, Slot, QTimer, Signal
 from api_controller import APIController
 from vm_viewer import VMViewer
 from vm_selection_model import VMSelectionModel
@@ -66,19 +65,21 @@ class CentralController(QObject):
     def on_api_complete(self, response_data):
         try:
             self.response_list: list[dict] = json.loads(response_data)
-            logging.info(f'response list = {self.response_list}')
+            print(f'response list = {self.response_list}')
             if len(self.response_list) == 1:
                 self.selected_dict = self.response_list[0]
-                logging.info(self.selected_dict)
+                print(self.selected_dict)
                 if self.is_setup == False:
                     self.launch_remote_viewer()
                 else:
+                    
                     dummy_viewer = VMViewer()
-                    logging.info(self.selected_dict)
+                    print(self.selected_dict)
                     dummy_viewer.setup(self.selected_dict)
                     self.status_view.setProperty('text', '設定完成!')
                     QTimer.singleShot(
-                3000, lambda: self.status_view.setProperty('text', '準備就緒!'))
+                1500, lambda: self.status_view.setProperty('text', f'PC: {socket.gethostname()}\n準備就緒!'))
+                    self.is_setup = False
 
             elif len(self.response_list) > 0:
                 self.status_view.setProperty('visible', 'false')
@@ -87,21 +88,23 @@ class CentralController(QObject):
             else:
                 self.status_view.setProperty('text', '驗證失敗: 沒有虛擬機!')
                 QTimer.singleShot(
-                3000, lambda: self.status_view.setProperty('text', '準備就緒!'))
+                1500, lambda: self.status_view.setProperty('text', f'PC: {socket.gethostname()}\n準備就緒!'))
+                self.is_setup = False
 
         except Exception as e:
             self.status_view.setProperty('text', '驗證失敗: API 無回應')
             QTimer.singleShot(
-                3000, lambda: self.status_view.setProperty('text', '準備就緒!'))
+                1500, lambda: self.status_view.setProperty('text', f'PC: {socket.gethostname()}\n準備就緒!'))
+            self.is_setup = False
         finally:
             self.input_id.setProperty('readOnly', False)
         
     
     @Slot()
     def on_task_complete(self):
-        logging.info("Task completed signal received.")
+        print("Task completed signal received.")
         QTimer.singleShot(
-            3000, lambda: self.status_view.setProperty('text', '準備就緒!'))
+            1500, lambda: self.status_view.setProperty('text', f'PC: {socket.gethostname()}\n準備就緒!'))
 
     @Slot(str)
     def select_vm(self, selection: str):
@@ -131,7 +134,7 @@ class CentralController(QObject):
         self.worker.deleteLater()
         self.status_view.setProperty('text', f'已關閉 {self.selected_dict["vm_name"]}!')
         QTimer.singleShot(
-            2000, lambda: self.status_view.setProperty('text', '準備就緒!'))
+            1500, lambda: self.status_view.setProperty('text', f'PC: {socket.gethostname()}\n準備就緒!'))
         
     def run_vm_now(self):
         if self.selected_dict is not None:
