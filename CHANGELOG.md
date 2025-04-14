@@ -56,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Input will now be dsiabled during API calls
 
 
-## [0.1.0] - 2025-04-08
+## [0.1.0] - 2025-04-15
 
 ### Added
 - `CHANGELOG.md` for changelog
@@ -67,9 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/api/sync_version.py` from KwMathConsult that syncs version between frontend and backend
 - `/api/backend/version.py` from KwMathConsult that keeps the constant VERSION variable
 
-
-
-
+### Changed
 - Modified `build.sh` (compared to previous iteration in `customize.sh`) with full utilization of all cores to speed up all 3 jobs
 - Moved `/api/backend/run.sh` to `/api/run.sh`, also added a line that runs `/api/sync_version.py`
 - Updated `/api/backend/main.py` to use synced version from `/api/backend/version.py`

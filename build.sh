@@ -51,15 +51,6 @@ if [ "$SKIP_BIN" = false ]; then
   sed -i "/^\[nuitka\]/,/^\[/ s|^\(extra_args *= *\)|\1$PATCH_ARGS |" pysidedeploy.spec
   sed -i "/^\[app\]/,/^\[/ s|^title *= *.*|$APP_TITLE|" pysidedeploy.spec
   pyside6-deploy
-
-  cd ../..
-
-  BIN_PATH=$(find "$BIN_OUTPUT_DIR" -name "*.bin" | head -n 1)
-  if [[ ! -f "$BIN_PATH" ]]; then
-      echo "ERROR: .bin not found!"
-      exit 1
-  fi
-  cp -f "$BIN_PATH" ./"$BIN_NAME"
 else
   echo "[!] Skipping [Step 1] Build binary with pyside6-deploy"
 fi
@@ -67,6 +58,12 @@ fi
 if [ "$SKIP_ISO" = false ]; then
   echo ""
   echo "[Step 2] Build custom Debian ISO with lb"
+  BIN_PATH=$(find "$BIN_OUTPUT_DIR" -name "*.bin" | head -n 1)
+  if [[ ! -f "$BIN_PATH" ]]; then
+      echo "ERROR: .bin not found!"
+      exit 1
+  fi
+  cp -f "$BIN_PATH" ./"$BIN_NAME"
   ISO_DIR="kaowei-iso"
   rm -rf "$ISO_DIR"
   sudo lb clean

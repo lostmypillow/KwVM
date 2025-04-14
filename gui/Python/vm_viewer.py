@@ -3,6 +3,7 @@ import subprocess
 import os
 import proxmoxer
 import json
+import socket
 from pynput.keyboard import Listener, Key
 from PySide6.QtCore import QThread
 config_folder_path = os.path.join(os.path.expanduser("~"), '.kwvm')
@@ -159,7 +160,7 @@ class VMViewer(QThread):
             file.write(config_contents)
         print(config_contents)
 
-        if vm_info['pc_owner'] != None:
+        if vm_info['pc_owner'] == socket.gethostname():
             try:
                 self.create_desktop_file(config_filepath=config_filepath, vm_info=vm_info)
             except Exception as e:
