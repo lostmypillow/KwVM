@@ -60,25 +60,31 @@ class CentralController(QObject):
                 self.status_view.setProperty('text', f'驗證失敗: {input_text} 不能為空格')
             else:
                 self.status_view.setProperty('text', f'驗證失敗: {input_text} 為無效字元')
+            QTimer.singleShot(
+                1500, lambda: self.status_view.setProperty(
+                    'text',
+                    f'PC: {socket.gethostname()}\n準備就緒!'))
         self.input_id.setProperty('text', '')
     @Slot(str)
     def on_api_complete(self, response_data):
         try:
             self.response_list: list[dict] = json.loads(response_data)
-            print(f'response list = {self.response_list}')
+            logging.info(f'response list = {self.response_list}')
             if len(self.response_list) == 1:
                 self.selected_dict = self.response_list[0]
-                print(self.selected_dict)
+                logging.info(self.selected_dict)
                 if self.is_setup == False:
                     self.launch_remote_viewer()
                 else:
                     
                     dummy_viewer = VMViewer()
-                    print(self.selected_dict)
+                    logging.info(self.selected_dict)
                     dummy_viewer.setup(self.selected_dict)
                     self.status_view.setProperty('text', '設定完成!')
                     QTimer.singleShot(
-                1500, lambda: self.status_view.setProperty('text', f'PC: {socket.gethostname()}\n準備就緒!'))
+                1500, lambda: self.status_view.setProperty(
+                    'text',
+                    f'PC: {socket.gethostname()}\n準備就緒!'))
                     self.is_setup = False
 
             elif len(self.response_list) > 0:
@@ -102,14 +108,14 @@ class CentralController(QObject):
     
     @Slot()
     def on_task_complete(self):
-        print("Task completed signal received.")
+        logging.info("Task completed signal received.")
         QTimer.singleShot(
             1500, lambda: self.status_view.setProperty('text', f'PC: {socket.gethostname()}\n準備就緒!'))
 
     @Slot(str)
     def select_vm(self, selection: str):
         self.selected_dict = next((item for item in self.response_list if item.get('vm_name') == selection), None)
-        self.status_view.setProperty('text', f'已選擇{selection}')
+        self.status_view.setProperty('text', f'已選擇 {selection}')
         self.status_view.setProperty('visible', 'true')
         self.selection_view.setProperty('visible', 'false')
         self.launch_remote_viewer()

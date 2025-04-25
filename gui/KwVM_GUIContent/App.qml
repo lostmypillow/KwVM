@@ -7,7 +7,7 @@ Window {
     height: mainScreen.height
 
     visible: true
-    title: "高偉虛擬機 0.1.0"
+    title: "高偉虛擬機 0.2.0"
 
     
 

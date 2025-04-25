@@ -73,7 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `/api/backend/main.py` to use synced version from `/api/backend/version.py`
 - `api/frontend/package.json` now has version that syncs with GUI release
 - `*.spec` to `gitignore`
-- All `logging.info()` calls to `print()` since I can't figure out why `~/.kwvm/app.log` doesn't appear, will fix in later minor release
+- All `logging.info()` calls to `logging.info()` since I can't figure out why `~/.kwvm/app.log` doesn't appear, will fix in later minor release
 - Only import needed modules from `pynput` module
 
 ### Removed
@@ -82,3 +82,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Splash images because I can't figure out how to make it appear during boot
 - `uq_pve_vm_id` constraint from database schema since it's counting multiple NULLs as duplicates
 - `gio` call to set `.desktop` as trusted. Possible bug, will fix in later minor release
+
+## [0.1.1] - 2025-04-15
+
+### Added
+- chown the folder where the log file resides (fixes bug in 0.1.0)
+- command that trusts all `.desktop` file upon creation (fixes bug in 0.1.0)
+
+### Changed
+- All `print` calls changed back to `logging.info`
+- 
+
+
+## [0.1.2] - 2025-04-21
+- Moves the binary to applications and create a .desktop instead with icon
+- change background to binary
+- remove panels
+- create custom icon .desktop
+- remove unnecessary icons
+- changed exit vm key
+- added better logging and error handling

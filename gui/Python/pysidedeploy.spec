@@ -37,13 +37,13 @@ android_packages = buildozer==1.5.0,cython==0.29.33
 qml_files = KwVM_GUIContent/App.qml,KwVM_GUIContent/Screen01.ui.qml
 
 # excluded qml plugin binaries
-excluded_qml_plugins = QtCharts,QtQuick3D,QtSensors,QtTest,QtWebEngine
+excluded_qml_plugins = QtCharts,QtSensors,QtWebEngine
 
 # qt modules used. comma separated
-modules = Core,Qml,DBus,Network,QuickTemplates2,QmlModels,QmlMeta,QuickControls2,Quick,Gui,QmlWorkerScript,OpenGL
+modules = Gui,Qml,QuickControls2,Network,DBus,QuickTemplates2,QmlModels,Core,QmlMeta,OpenGL,Quick,QmlWorkerScript
 
 # qt plugins used by the application
-plugins = networkaccess,platforms,iconengines,egldeviceintegrations,tls,networkinformation,generic,scenegraph,platforms/darwin,qmltooling,platformthemes,xcbglintegrations,accessiblebridge,platforminputcontexts,imageformats
+plugins = xcbglintegrations,iconengines,qmltooling,networkinformation,scenegraph,egldeviceintegrations,tls,platforminputcontexts,platforms/darwin,imageformats,networkaccess,generic,platforms,platformthemes,accessiblebridge
 
 [android]
 
