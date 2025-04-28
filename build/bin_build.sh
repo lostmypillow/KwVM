@@ -15,5 +15,6 @@ build_binary() {
     sed -i "/^\[nuitka\]/,/^\[/ s|^\(extra_args *= *\)|\1$PATCH_ARGS |" pysidedeploy.spec
     sed -i "/^\[app\]/,/^\[/ s|^title *= *.*|$APP_TITLE|" pysidedeploy.spec
     pyside6-deploy
+    cd ../..
     echo ""
 }

@@ -132,4 +132,5 @@ EOF_G
 
     echo "[Done] Created $FULL_NAME ISO at: $ISO_FINAL_NAME"
     echo ""
+    cd ..
 }

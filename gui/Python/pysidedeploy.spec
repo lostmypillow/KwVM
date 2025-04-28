@@ -5,24 +5,24 @@ title = 高偉虛擬機
 
 # project directory. the general assumption is that project_dir is the parent directory
 # of input_file
-project_dir = /home/jl/Documents/KwVM/gui
+project_dir = /home/lost/KwVM/gui
 
 # source file path
-input_file = /home/jl/Documents/KwVM/gui/Python/main.py
+input_file = /home/lost/KwVM/gui/Python/main.py
 
 # directory where exec is stored
-exec_directory = /home/jl/Documents/KwVM/gui
+exec_directory = /home/lost/KwVM/gui
 
 # path to .pyproject project file
 project_file = 
 
 # application icon
-icon = /home/jl/Documents/KwVM/.venv/lib/python3.11/site-packages/PySide6/scripts/deploy_lib/pyside_icon.jpg
+icon = /home/lost/KwVM/.venv/lib/python3.11/site-packages/PySide6/scripts/deploy_lib/pyside_icon.jpg
 
 [python]
 
 # python path
-python_path = /home/jl/Documents/KwVM/.venv/bin/python3
+python_path = /home/lost/KwVM/.venv/bin/python3
 
 # python packages to install
 packages = Nuitka==2.4.8
@@ -40,10 +40,10 @@ qml_files = KwVM_GUIContent/App.qml,KwVM_GUIContent/Screen01.ui.qml
 excluded_qml_plugins = QtCharts,QtSensors,QtWebEngine
 
 # qt modules used. comma separated
-modules = Gui,Qml,QuickControls2,Network,DBus,QuickTemplates2,QmlModels,Core,QmlMeta,OpenGL,Quick,QmlWorkerScript
+modules = QmlMeta,Qml,Network,OpenGL,Core,QmlModels,DBus,Quick,QuickTemplates2,QuickControls2,QmlWorkerScript,Gui
 
 # qt plugins used by the application
-plugins = xcbglintegrations,iconengines,qmltooling,networkinformation,scenegraph,egldeviceintegrations,tls,platforminputcontexts,platforms/darwin,imageformats,networkaccess,generic,platforms,platformthemes,accessiblebridge
+plugins = tls,accessiblebridge,imageformats,xcbglintegrations,platformthemes,iconengines,egldeviceintegrations,platforms,platforminputcontexts,platforms/darwin,networkaccess,qmltooling,generic,scenegraph,networkinformation
 
 [android]
 
