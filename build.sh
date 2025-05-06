@@ -3,7 +3,7 @@ set -eo pipefail
 trap 'echo "[!] ERROR at line $LINENO: $BASH_COMMAND exited with status $?"' ERR
 
 
-VERSION="0.2.0"
+VERSION="0.2.1"
 echo "KAOWEI DEBIAN BUILD SCRIPT for v$VERSION STARTING..."
 ### Variables
 ISO_NAME="KAOWEI_DEBIAN_$VERSION"

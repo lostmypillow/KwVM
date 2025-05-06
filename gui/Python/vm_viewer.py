@@ -116,7 +116,6 @@ class VMViewer(QThread):
         with open(config_filepath, 'w') as file:
             config_contents = f'''[virt-viewer]
 type=spice
-fullscreen=1
 kiosk-quit=on-disconnect
 host={vm_info['spice_proxy'].split(':')[0]}
 port={vm_info['spice_proxy'].split(':')[1]}
@@ -202,10 +201,10 @@ title={vm_info['vm_name']}
 
 
             desktop_content = f"""[Desktop Entry]
-Version=0.2.0
+Version=0.2.1
 Name={vm_info['vm_name']}
 Comment=Launch {vm_info['vm_name']} Directly with KwVM
-Exec=sh -c "LC_ALL=C wmctrl -l | grep '高偉虛擬機 0.2.0' && wmctrl -c '高偉虛擬機 0.2.0'; sleep 0.5; {os.path.expanduser('~')}/.kwvm/高偉虛擬機.bin -p '{json_filepath}'"
+Exec=sh -c "LC_ALL=C wmctrl -l | grep '高偉虛擬機 0.2.1' && wmctrl -c '高偉虛擬機 0.2.1'; sleep 0.5; {os.path.expanduser('~')}/.kwvm/高偉虛擬機.bin -p '{json_filepath}'"
 Type=Application
 {icon_path}
 Categories=Utility;

@@ -1,6 +1,6 @@
 build_iso() {
-    cd ..
-
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
     echo "[Step 2] Build custom Debian ISO with lb"
     # Clean up any existing build artifacts
     ISO_DIR="kaowei-iso"
@@ -18,7 +18,7 @@ build_iso() {
     fi
 
     # Copy the .bin file to the root of the build directory
-    cp -f "$BIN_PATH" ./"$BIN_NAME"
+    cp -f "$BIN_PATH" "$PROJECT_ROOT/$BIN_NAME"
 
     
 
@@ -44,7 +44,7 @@ build_iso() {
     # Package installation list
     # ------------------------------
     mkdir -p config/package-lists
-    cp -f ../build/kaowei.list.chroot config/package-lists/
+    cp -f "$SCRIPT_DIR/kaowei.list.chroot" config/package-lists/
     # ------------------------------
     # Application autostart setup
     # ------------------------------
@@ -54,10 +54,10 @@ build_iso() {
 
     # Place binary in shared config dir
     mkdir -p config/includes.chroot/home/kaowei/.kwvm
-    cp -f ../"$BIN_NAME" config/includes.chroot/home/kaowei/.kwvm/
-    cp -f ../logo.png config/includes.chroot/home/kaowei/.kwvm/
-    cp -f ../win10.png config/includes.chroot/home/kaowei/.kwvm/
-    cp -f ../win7.png config/includes.chroot/home/kaowei/.kwvm/
+    cp -f "$PROJECT_ROOT/$BIN_NAME" config/includes.chroot/home/kaowei/.kwvm/
+    cp -f "$PROJECT_ROOT/logo.png" config/includes.chroot/home/kaowei/.kwvm/
+    cp -f "$PROJECT_ROOT/win10.png" config/includes.chroot/home/kaowei/.kwvm/
+    cp -f "$PROJECT_ROOT/win7.png" config/includes.chroot/home/kaowei/.kwvm/
     mkdir -p config/includes.chroot/home/kaowei/Desktop
     cat <<EOF >config/includes.chroot/home/kaowei/Desktop/高偉虛擬機.desktop
 [Desktop Entry]
@@ -81,7 +81,7 @@ EOF
     # System customization hook
     # ------------------------------
     mkdir -p config/hooks/normal
-    cp -f ../build/customize_chroot.sh config/hooks/normal/00-customize.chroot
+    cp -f "$SCRIPT_DIR/customize_chroot.sh" config/hooks/normal/00-customize.chroot
     chmod +x config/hooks/normal/00-customize.chroot
 
     # ------------------------------
@@ -132,5 +132,4 @@ EOF_G
 
     echo "[Done] Created $FULL_NAME ISO at: $ISO_FINAL_NAME"
     echo ""
-    cd ..
 }

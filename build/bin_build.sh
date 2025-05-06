@@ -1,12 +1,13 @@
 build_binary() {
-    cd ..
     echo "[Step 1] Build binary with pyside6-deploy"
     
     if [ ! -d ".venv" ]; then
         python3 -m venv .venv
     fi
     source .venv/bin/activate
-    cd gui/Python
+    PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    cd "$PROJECT_ROOT/gui/Python"
+
     pip install --no-cache-dir -r requirements.txt >/dev/null
     rm -f pysidedeploy.spec
     pyside6-deploy --init

@@ -13,7 +13,7 @@ from PySide6.QtCore import QObject, QTimer
 from vm_selection_model import VMSelectionModel
 from central_controller import CentralController
 
-version = "0.2.0"
+version = "0.2.1"
 
 def main():
     misc_files_location = os.path.join(os.path.expanduser("~"), '.kwvm')
