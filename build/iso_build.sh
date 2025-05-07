@@ -7,11 +7,13 @@ build_iso() {
     rm -rf "$ISO_DIR"
     sudo lb clean
     sudo rm -rf kaowei-iso
+    echo "SCRIPT_DIR is $SCRIPT_DIR"
+    echo "PROJECT_ROOT is $PROJECT_ROOT"
 
     pwd
 
     # Find the compiled .bin file
-    BIN_PATH=$(find "gui" -name "*.bin" | head -n 1)
+    BIN_PATH=$(find "$PROJECT_ROOT/gui" -name "*.bin" | head -n 1)
     if [[ ! -f "$BIN_PATH" ]]; then
         echo "ERROR: .bin not found!"
         exit 1

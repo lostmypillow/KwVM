@@ -1,8 +1,8 @@
 burn_usb() {
-    echo ""
+    pwd
     echo "[Step 3] Burning ISO to USB"
     echo ""
-    cd ../kaowei-iso
+    cd kaowei-iso
     ISO_PATH_ABS=$(find . -name '*.iso' | sort | tail -n 1)
     if [ -z "$ISO_PATH_ABS" ]; then
         echo "ERROR: No existing ISO found to burn. Aborting."

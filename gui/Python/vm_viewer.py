@@ -201,10 +201,10 @@ title={vm_info['vm_name']}
 
 
             desktop_content = f"""[Desktop Entry]
-Version=0.2.1
+Version=0.2.2
 Name={vm_info['vm_name']}
 Comment=Launch {vm_info['vm_name']} Directly with KwVM
-Exec=sh -c "LC_ALL=C wmctrl -l | grep '高偉虛擬機 0.2.1' && wmctrl -c '高偉虛擬機 0.2.1'; sleep 0.5; {os.path.expanduser('~')}/.kwvm/高偉虛擬機.bin -p '{json_filepath}'"
+Exec=sh -c "LC_ALL=C wmctrl -l | grep '高偉虛擬機 0.2.2' && wmctrl -c '高偉虛擬機 0.2.2'; sleep 0.5; {os.path.expanduser('~')}/.kwvm/高偉虛擬機.bin -p '{json_filepath}'"
 Type=Application
 {icon_path}
 Categories=Utility;

@@ -18,26 +18,26 @@ const formData = reactive({
   usb: 0,
 });
 // window.location.host
-const isProxmoxEnabled = computed(() => formData.pve === true);
+// const formData.pve == 1 = computed(() => formData.pve === true);
 const isEdit = ref(false);
 const clear = () => {
   isEdit.value = false;
   Object.keys(formData).forEach((key) => {
-    formData[key] = key === "pve" || usb ? 0 : null;
+    formData[key] = key === "pve" || "usb" ? 0 : null;
   });
 };
-
+// localhost:8000
 const submit = async () => {
   let response;
   try {
     if (isEdit.value == false) {
       response = await axios.post(
-        `http://${window.location.host}/vm`,
+        `http://localhost:8000/vm`,
         formData
       );
     } else {
       response = await axios.put(
-        `http://${window.location.host}/vm/${formData.id}`,
+        `http://localhost:8000/vm/${formData.id}`,
         formData
       );
       isEdit.value = false;
@@ -53,8 +53,9 @@ const submit = async () => {
 const vmList = ref([]);
 const getAll = async () => {
   try {
-    const response = await axios.get(`http://${window.location.host}/vm/all`);
+    const response = await axios.get(`http://localhost:8000/vm/all`);
     vmList.value = response.data;
+    console.log(vmList.value)
   } catch (error) {
     console.error("Error:", error);
   }
@@ -99,24 +100,15 @@ onMounted(() => getAll());
           <line x1="5" y1="12" x2="19" y2="12"></line></svg
         >Add VM Configuration
       </button>
-      <dialog id="my_modal_1" class="modal">
-        <div class="modal-box">
+      <dialog id="my_modal_1" class="modal ">
+        <div class="modal-box max-w-1/2">
           <div class="join">
             <h3 class="text-lg font-bold">
               {{ isEdit ? "Edit" : "Add" }} VM Configuration
             </h3>
-            <label class="label cursor-pointer pl-4">
-              <span class="label-text">Enable if it's a Proxmox VM</span>
-              <input
-                type="checkbox"
-                v-model="formData.pve"
-                class="toggle"
-                :true-value="true"
-                :false-value="false"
-              />
-            </label>
+            
           </div>
-          <div class="p-6 max-w-lg mx-auto space-y-4">
+          <div class="p-6 max-w-full mx-auto space-y-4">
             <div class="join">
               <!-- VM Name -->
               <div class="form-control">
@@ -155,15 +147,26 @@ onMounted(() => getAll());
             </div>
 
             <!-- PVE hOST -->
+            <label class="label cursor-pointer">
+              <span class="label-text">Enable if it's a Proxmox VM</span>
+              <input
+                type="checkbox"
+                v-model="formData.pve"
+                class="toggle"
+                :true-value="1"
+                :false-value="0"
+              />
+            </label>
             <div class="form-control">
+              
               <label class="label">PVE HOST</label>
               <input
                 type="text"
                 v-model="formData.pve_host"
                 class="input input-bordered w-full"
-                :disabled="!isProxmoxEnabled"
-                :required="isProxmoxEnabled"
-                placeholder="e.g. lostmypillow"
+                :disabled="formData.pve == 0"
+                :required="formData.pve == 1"
+                placeholder="e.g. 192.168.x.x:0000"
               />
             </div>
             <div class="join">
@@ -174,8 +177,8 @@ onMounted(() => getAll());
                   type="text"
                   v-model="formData.pve_token_username"
                   class="input input-bordered w-full"
-                  :disabled="!isProxmoxEnabled"
-                  :required="isProxmoxEnabled"
+                  :disabled="formData.pve == 0"
+                  :required="formData.pve == 1"
                   placeholder="e.g. lostmypillow"
                 />
               </div>
@@ -187,8 +190,8 @@ onMounted(() => getAll());
                   type="text"
                   v-model="formData.pve_token_name"
                   class="input input-bordered w-full"
-                  :disabled="!isProxmoxEnabled"
-                  :required="isProxmoxEnabled"
+                  :disabled="formData.pve == 0"
+                  :required="formData.pve == 1"
                   placeholder="e.g. lostmypillow"
                 />
               </div>
@@ -200,8 +203,8 @@ onMounted(() => getAll());
                 type="text"
                 v-model="formData.pve_token_value"
                 class="input input-bordered w-full"
-                :disabled="!isProxmoxEnabled"
-                :required="isProxmoxEnabled"
+                :disabled="formData.pve == 0"
+                :required="formData.pve == 1"
                 placeholder="e.g. c1f03f8b-5e1d-4c4a-a51e-1f32f1a9d7b2"
               />
             </div>
@@ -214,8 +217,8 @@ onMounted(() => getAll());
                   type="number"
                   v-model.number="formData.pve_vm_id"
                   class="input input-bordered w-full"
-                  :disabled="!isProxmoxEnabled"
-                  :required="isProxmoxEnabled"
+                  :disabled="formData.pve == 0"
+                  :required="formData.pve == 1"
                   placeholder="e.g. 301"
                 />
               </div>
@@ -226,7 +229,7 @@ onMounted(() => getAll());
                   type="text"
                   v-model="formData.pve_proxy"
                   class="input input-bordered w-full"
-                  :disabled="!isProxmoxEnabled"
+                  :disabled="formData.pve == 0"
                   placeholder="e.g. pve1.kaowei.tw:3128 or pve2.kaowei.tw:3128"
                 />
               </div>
@@ -252,7 +255,7 @@ onMounted(() => getAll());
                 type="text"
                 v-model="formData.vm_password"
                 class="input input-bordered w-full"
-                :disabled="isProxmoxEnabled"
+                :disabled="formData.pve == 1"
               />
             </div>
             
@@ -265,8 +268,8 @@ onMounted(() => getAll());
                 type="checkbox"
                 v-model="formData.usb"
                 class="toggle"
-                :true-value="true"
-                :false-value="false"
+                :true-value="1"
+                :false-value="0"
               />
             </label>
             </div>
@@ -374,7 +377,7 @@ onMounted(() => getAll());
           <td>{{ x.vm_name }}</td>
           <td>{{ x.human_owner }}</td>
           <td>{{ x.pc_owner }}</td>
-          <td>{{ x.pve }}</td>
+          <td>{{ x.pve == 1 ? 'yes': 'no' }}</td>
           <td>{{ x.pve_host }}</td>
           <td>{{ x.pve_token_username }}</td>
           <td>{{ x.pve_token_name }}</td>
@@ -383,7 +386,7 @@ onMounted(() => getAll());
           <td>{{ x.pve_proxy }}</td>
           <td>{{ x.spice_proxy }}</td>
           <td>{{ x.vm_password }}</td>
-          <td>{{ x.usb }}</td>
+          <td>{{ x.usb == 1 ? 'yes' : 'no' }}</td>
         </tr>
         <!-- row 2 -->
 
