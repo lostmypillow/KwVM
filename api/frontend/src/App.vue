@@ -26,18 +26,18 @@ const clear = () => {
     formData[key] = key === "pve" || "usb" ? 0 : null;
   });
 };
-// localhost:8000
+// ${window.location.host}
 const submit = async () => {
   let response;
   try {
     if (isEdit.value == false) {
       response = await axios.post(
-        `http://localhost:8000/vm`,
+        `http://${window.location.host}/vm`,
         formData
       );
     } else {
       response = await axios.put(
-        `http://localhost:8000/vm/${formData.id}`,
+        `http://${window.location.host}/vm/${formData.id}`,
         formData
       );
       isEdit.value = false;
@@ -53,7 +53,7 @@ const submit = async () => {
 const vmList = ref([]);
 const getAll = async () => {
   try {
-    const response = await axios.get(`http://localhost:8000/vm/all`);
+    const response = await axios.get(`http://${window.location.host}/vm/all`);
     vmList.value = response.data;
     console.log(vmList.value)
   } catch (error) {
